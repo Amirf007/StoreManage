@@ -8,7 +8,7 @@ namespace StoreManage.Entities
 {
     public class Commodity
     {
-        public int CommodityCode { get; set; }
+        public int Code { get; set; }
         public string Name { get; set; }
         public string Price { get; set; }
         public int Inventory { get; set; }

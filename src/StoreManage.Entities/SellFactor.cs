@@ -15,6 +15,6 @@ namespace StoreManage.Entities
         public string TotalPrice { get; set; }
         public string BuyerName { get; set; }
         public Commodity Commodity { get; set; }
-        public int CommodityId { get; set; }
+        public int CommodityCode { get; set; }
     }
 }

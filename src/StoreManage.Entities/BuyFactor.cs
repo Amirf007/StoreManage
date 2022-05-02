@@ -14,6 +14,6 @@ namespace StoreManage.Entities
         public string Count { get; set; }
         public string SellerName { get; set; }
         public Commodity Commodity { get; set; }
-        public int CommodityId { get; set; }
+        public int CommodityCode { get; set; }
     }
 }
