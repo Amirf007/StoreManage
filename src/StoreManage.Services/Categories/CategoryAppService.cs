@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StoreManage.Persistence.EF.Categories
+namespace StoreManage.Services.Categories
 {
-    public class EFCategoryRepository : CategoryRepository
+    public class CategoryAppService : CategoryService
     {
     }
 }

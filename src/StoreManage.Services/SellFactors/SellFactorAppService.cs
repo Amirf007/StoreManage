@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StoreManage.Persistence.EF.SellFactors
+namespace StoreManage.Services.SellFactors
 {
-    public class EFSellFactorRepository : SellFactorRepository
+    public class SellFactorAppService : SellFactorService
     {
     }
 }

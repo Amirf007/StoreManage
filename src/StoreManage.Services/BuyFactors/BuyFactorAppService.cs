@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StoreManage.Persistence.EF.BuyFactors
+namespace StoreManage.Services.BuyFactors
 {
-    public class EFBuyFactorRepository : BuyFactorRepository
+    public class BuyFactorAppService : BuyFactorService
     {
     }
 }

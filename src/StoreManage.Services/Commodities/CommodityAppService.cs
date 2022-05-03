@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StoreManage.Persistence.EF.Commodities
+namespace StoreManage.Services.Commodities
 {
-    public class EFCommodityRepository : CommodityRepository
+    public class CommodityAppService : CommodityService
     {
     }
 }

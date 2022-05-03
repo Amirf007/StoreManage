@@ -11,6 +11,7 @@ using Microsoft.OpenApi.Models;
 using StoreManage.Infrastructure.Application;
 using StoreManage.Persistence.EF;
 using StoreManage.Persistence.EF.Commodities;
+using StoreManage.Services.Commodities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,27 +37,27 @@ namespace StoreManage.RestAPI
             });
         }
 
-        //public void ConfigureContainer(ContainerBuilder builder)
-        //{
-        //    builder.RegisterType<EFDataContext>()
-        //        .WithParameter("connectionString", Configuration["ConnectionString"])
-        //         .AsSelf()
-        //         .InstancePerLifetimeScope();
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            builder.RegisterType<EFDataContext>()
+                .WithParameter("connectionString", Configuration["ConnectionString"])
+                 .AsSelf()
+                 .InstancePerLifetimeScope();
 
-        //    builder.RegisterAssemblyTypes(typeof(EFCommodityRepository).Assembly)
-        //              .AssignableTo<Repository>()
-        //              .AsImplementedInterfaces()
-        //              .InstancePerLifetimeScope();
+            builder.RegisterAssemblyTypes(typeof(EFCommodityRepository).Assembly)
+                      .AssignableTo<Repository>()
+                      .AsImplementedInterfaces()
+                      .InstancePerLifetimeScope();
 
-        //    builder.RegisterAssemblyTypes(typeof(CommodityAppService).Assembly)
-        //              .AssignableTo<Service>()
-        //              .AsImplementedInterfaces()
-        //              .InstancePerLifetimeScope();
+            builder.RegisterAssemblyTypes(typeof(CommodityAppService).Assembly)
+                      .AssignableTo<Service>()
+                      .AsImplementedInterfaces()
+                      .InstancePerLifetimeScope();
 
-        //    builder.RegisterType<EFUnitOfWork>()
-        //        .As<UnitOfWork>()
-        //        .InstancePerLifetimeScope();
-        //}
+            builder.RegisterType<EFUnitOfWork>()
+                .As<UnitOfWork>()
+                .InstancePerLifetimeScope();
+        }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
