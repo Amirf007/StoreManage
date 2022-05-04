@@ -37,5 +37,25 @@ namespace StoreManage.Services.Categories
             _repository.Add(category);
             _unitOfWork.Commit();
         }
+
+        public void Update(int id, UpdateCategoryDto dto)
+        {
+            Category category = _repository.GetbyId(id);
+            if (category==null)
+            {
+                throw new CategoryNotFoundException();
+            }
+
+            var IsExistCategory = _repository
+                .IsExistCategoryTitle(dto.Title);
+            if (IsExistCategory)
+            {
+                throw new CategoryIsAlreadyExistException();
+            }
+
+            category.Title = dto.Title;
+
+            _unitOfWork.Commit();
+        }
     }
 }

@@ -22,6 +22,11 @@ namespace StoreManage.Persistence.EF.Categories
             _dataContext.Categories.Add(category);
         }
 
+        public Category GetbyId(int id)
+        {
+            return _dataContext.Categories.Find(id);
+        }
+
         public bool IsExistCategoryTitle(string title)
         {
             return _dataContext.Categories.Any(_ => _.Title == title);
