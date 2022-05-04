@@ -8,5 +8,6 @@ namespace StoreManage.Infrastructure.Application
 {
     public interface UnitOfWork
     {
+        void Commit();
     }
 }

@@ -1,4 +1,5 @@
-﻿using StoreManage.Infrastructure.Application;
+﻿using StoreManage.Entities;
+using StoreManage.Infrastructure.Application;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,5 +10,7 @@ namespace StoreManage.Services.Categories.Contracts
 {
     public interface CategoryRepository : Repository
     {
+        void Add(Category category);
+        bool IsExistCategoryTitle(string title);
     }
 }

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
@@ -18,6 +18,11 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\StoreManage.Persistence.EF\StoreManage.Persistence.EF.csproj" />
+	  <ProjectReference Include="..\StoreManage.Test.Tools\StoreManage.Test.Tools.csproj" />
 	</ItemGroup>
 
 </Project>

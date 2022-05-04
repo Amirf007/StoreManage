@@ -9,5 +9,6 @@ namespace StoreManage.Services.Categories.Contracts
 {
     public interface CategoryService : Repository
     {
+        void Add(AddCategoryDto dto);
     }
 }
