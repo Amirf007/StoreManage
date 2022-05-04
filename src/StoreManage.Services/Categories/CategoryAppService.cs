@@ -38,6 +38,19 @@ namespace StoreManage.Services.Categories
             _unitOfWork.Commit();
         }
 
+        public void Delete(int id)
+        {
+            var category = _repository.GetbyId(id);
+            if (category==null)
+            {
+                throw new CategoryNotFoundException();
+            }
+
+            _repository.Remove(category);
+
+            _unitOfWork.Commit();
+        }
+
         public IList<GetCategoryDto> GetAll()
         {
            return _repository.GetAll();
@@ -45,7 +58,13 @@ namespace StoreManage.Services.Categories
 
         public GetCategoryDto GetCategory(int id)
         {
-            return _repository.GetCategory(id);
+            var category = _repository.GetCategory(id);
+            if (category==null)
+            {
+                throw new CategoryNotFoundException();
+            }
+
+            return category;
         }
 
         public void Update(int id, UpdateCategoryDto dto)

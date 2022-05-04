@@ -18,21 +18,20 @@ using static StoreManage.Specs.BDDHelper;
 
 namespace StoreManage.Specs.Categories
 {
-    [Scenario("مشاهده دسته بندی کالا")]
+    [Scenario("حذف دسته بندی ")]
     [Feature("",
         AsA = "فروشنده ",
         IWantTo = " دسته بندی کالاها را مدیریت کنم  ",
         InOrderTo = "در آن کالاها را تعریف کنم"
     )]
-    public class GetCategory : EFDataContextDatabaseFixture
+    public class DeleteCategory : EFDataContextDatabaseFixture
     {
         private readonly EFDataContext _dataContext;
         private readonly CategoryService _sut;
         private readonly CategoryRepository _repository;
         private readonly UnitOfWork _unitOfWork;
-        private GetCategoryDto expected;
         private Category _category;
-        public GetCategory(ConfigurationFixture configuration) : base(configuration)
+        public DeleteCategory(ConfigurationFixture configuration) : base(configuration)
         {
             _dataContext = CreateDataContext();
             _unitOfWork = new EFUnitOfWork(_dataContext);
@@ -47,17 +46,17 @@ namespace StoreManage.Specs.Categories
 
             _dataContext.Manipulate(_ => _.Categories.Add(_category));
         }
-         
-        [When("دسته بندی با عنوان 'لبنیات' را نمایش میدهیم")]
+
+        [When("دسته بندی با عنوان 'لبنیات' را حذف میکنیم")]
         public void When()
-        {
-            expected = _sut.GetCategory(_category.Id);
+        { 
+            _sut.Delete(_category.Id);
         }
 
-        [Then("دسته بندی کالایی با عنوان 'لبنیات' در فهرست دسته بندی کالاها باید وجود داشته باشد")]
+        [Then("هیچ دسته بندی ای در فهرست دسته بندی های کالا ها نباید وجود داشته باشد")]
         public void Then()
         {
-            expected.Title.Should().Be(_category.Title);
+            _dataContext.Categories.Should().HaveCount(0);
         }
 
         [Fact]

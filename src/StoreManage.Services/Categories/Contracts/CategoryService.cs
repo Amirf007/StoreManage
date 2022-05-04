@@ -13,6 +13,7 @@ namespace StoreManage.Services.Categories.Contracts
         void Update(int id, UpdateCategoryDto dto);
         IList<GetCategoryDto> GetAll();
         GetCategoryDto GetCategory(int id);
+        void Delete(int id);
     }
 }
     

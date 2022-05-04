@@ -52,5 +52,10 @@ namespace StoreManage.Persistence.EF.Categories
         {
             return _dataContext.Categories.Any(_ => _.Title == title);
         }
+
+        public void Remove(Category category)
+        {
+            _dataContext.Categories.Remove(category);
+        }
     }
 }

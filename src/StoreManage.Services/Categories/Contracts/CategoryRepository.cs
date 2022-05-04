@@ -15,5 +15,6 @@ namespace StoreManage.Services.Categories.Contracts
         Category GetbyId(int id);
         IList<GetCategoryDto> GetAll();
         GetCategoryDto GetCategory(int id);
+        void Remove(Category category);
     }
 }
