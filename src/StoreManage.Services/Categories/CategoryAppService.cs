@@ -38,6 +38,11 @@ namespace StoreManage.Services.Categories
             _unitOfWork.Commit();
         }
 
+        public IList<GetCategoryDto> GetAll()
+        {
+           return _repository.GetAll();
+        }
+
         public void Update(int id, UpdateCategoryDto dto)
         {
             Category category = _repository.GetbyId(id);

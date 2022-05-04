@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using StoreManage.Entities;
 using StoreManage.Infrastructure.Application;
 using StoreManage.Infrastructure.Test;
 using StoreManage.Persistence.EF;
@@ -108,6 +109,39 @@ namespace StoreManage.Services.Test.Unit.Categories
             Action Expected = () => _sut.Update(category.Id,dto);
             Expected.Should()
                 .ThrowExactly<CategoryIsAlreadyExistException>();
+        }
+
+        [Fact]
+        public void Getall_return_all_categories_properly()
+        {
+            GenerateCategoriesInDataBase();
+
+            var expected = _sut.GetAll();
+
+            expected.Should().HaveCount(3);
+            expected.Should().Contain(_ => _.Title == "لبنیات");
+            expected.Should().Contain(_ => _.Title == "تنقلات");
+            expected.Should().Contain(_ => _.Title == "شوینده ها");
+        }
+
+        private void GenerateCategoriesInDataBase()
+        {
+            var categories = new List<Category>
+            {
+                new Category
+                {
+                Title = "لبنیات"
+                },
+                new Category
+                {
+                Title = "تنقلات"
+                },
+                new Category
+                {
+                Title = "شوینده ها"
+                }
+            };
+            _dataContext.Manipulate(_ => _.Categories.AddRange(categories));
         }
     }
 }

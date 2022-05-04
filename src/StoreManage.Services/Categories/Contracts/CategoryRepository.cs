@@ -13,5 +13,6 @@ namespace StoreManage.Services.Categories.Contracts
         void Add(Category category);
         bool IsExistCategoryTitle(string title);
         Category GetbyId(int id);
+        IList<GetCategoryDto> GetAll();
     }
 }

@@ -22,6 +22,17 @@ namespace StoreManage.Persistence.EF.Categories
             _dataContext.Categories.Add(category);
         }
 
+        public IList<GetCategoryDto> GetAll()
+        {
+            return _dataContext.Categories
+                  .Select(_ => new GetCategoryDto
+                  {
+
+                     Title = _.Title,
+
+                  }).ToList();
+        }
+
         public Category GetbyId(int id)
         {
             return _dataContext.Categories.Find(id);
