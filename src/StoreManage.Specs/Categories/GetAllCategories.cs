@@ -23,14 +23,14 @@ namespace StoreManage.Specs.Categories
         IWantTo = " دسته بندی کالاها را مدیریت کنم  ",
         InOrderTo = "در آن کالاها را تعریف کنم"
     )]
-    public class GetAllCategory : EFDataContextDatabaseFixture
+    public class GetAllCategories : EFDataContextDatabaseFixture
     {
         private readonly EFDataContext _dataContext;
         private readonly CategoryService _sut;
         private readonly CategoryRepository _repository;
         private readonly UnitOfWork _unitOfWork;
         private IList<GetCategoryDto> expected;
-        public GetAllCategory(ConfigurationFixture configuration) : base(configuration)
+        public GetAllCategories(ConfigurationFixture configuration) : base(configuration)
         {
             _dataContext = CreateDataContext();
             _unitOfWork = new EFUnitOfWork(_dataContext);

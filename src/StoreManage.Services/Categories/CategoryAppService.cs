@@ -43,6 +43,11 @@ namespace StoreManage.Services.Categories
            return _repository.GetAll();
         }
 
+        public GetCategoryDto GetCategory(int id)
+        {
+            return _repository.GetCategory(id);
+        }
+
         public void Update(int id, UpdateCategoryDto dto)
         {
             Category category = _repository.GetbyId(id);
