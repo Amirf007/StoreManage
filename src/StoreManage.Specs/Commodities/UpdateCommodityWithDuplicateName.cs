@@ -21,24 +21,24 @@ using static StoreManage.Specs.BDDHelper;
 
 namespace StoreManage.Specs.Commodities
 {
-    [Scenario("تعریف کالا با عنوان تکرای در یک دسته بندی")]
+    [Scenario("ویرایش کالا با عنوان تکرای در یک دسته بندی")]
     [Feature("",
         AsA = "فروشنده ",
         IWantTo = " کالاها را مدیریت کنم ",
         InOrderTo = "کالا ها را دسته بندی و خرید و فروش کنم"
     )]
-    public class AddCommodityWithDuplicateName : EFDataContextDatabaseFixture
+    public class UpdateCommodityWithDuplicateName : EFDataContextDatabaseFixture
     {
         private readonly EFDataContext _dataContext;
         private readonly CommodityService _sut;
         private readonly CommodityRepository _commodityrepository;
         private readonly CategoryRepository _categoryRepository;
         private readonly UnitOfWork _unitOfWork;
-        private AddCommodityDto _dto;   
+        private UpdateCommodityDto _dto;
         private Category _category;
         private Commodity _commodity;
         Action expected;
-        public AddCommodityWithDuplicateName(ConfigurationFixture configuration) : base(configuration)
+        public UpdateCommodityWithDuplicateName(ConfigurationFixture configuration) : base(configuration)
         {
             _dataContext = CreateDataContext();
             _unitOfWork = new EFUnitOfWork(_dataContext);
@@ -55,7 +55,7 @@ namespace StoreManage.Specs.Commodities
             _dataContext.Manipulate(_ => _.Categories.Add(_category));
         }
 
-        [Given("کالایی با نام 'شیر رامک' در دسته بندی با عنوان 'لبنیات' وجود دارد")]
+        [Given("کالایی با نام 'شیر رامک' و قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد در دسته بندی با عنوان 'لبنیات' وجود دارد")]
         public void GivenAnd()
         {
             _commodity = CommodityFactory.CreateCommodity(_category.Id);
@@ -63,26 +63,42 @@ namespace StoreManage.Specs.Commodities
             _dataContext.Manipulate(_ => _.Commodities.Add(_commodity));
         }
 
-        [When("کالایی با نام 'شیر رامک' و قیمت '200000' ریال و موجودی '10' عدد و بیشترین موجودی '15' و کمترین موجودی '5' تعریف میکنم")]
-        public void When()
+        [Given("و : کالایی با نام 'شیر پر چرب رامک' و قیمت '170000' ریال و موجودی '9' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد در دسته بندی با عنوان 'لبنیات' وجود دارد")]
+        public void GivenAnd2()
         {
-            _dto = new AddCommodityDto
-            {
-                Name = _commodity.Name,
-                Price = "200000",
-                Inventory = 10,
-                MaxInventory = "15",
-                MinInventory = "5",
-                CategoryId = _category.Id,
-            };
+            var existcommodity = CommodityFactory.CreateCommodity(_category.Id);
+            existcommodity.Name = "شیر پر چرب رامک";
+            existcommodity.Price = "170000";
+            existcommodity.Inventory = 9;
 
-            expected = () => _sut.Add(_dto);
+            _dataContext.Manipulate(_ => _.Commodities.Add(existcommodity));
         }
 
-        [Then("تنها یک کالا با نام' شیر رامک ' باید در دسته بندی با عنوان 'لبنیات' وجود داشته باشد")]
+        [When("نام کالایی با نام 'شیر رامک' و قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' و کمترین موجودی '5' را ب  'شیر پر چرب رامک' تغییر میدیم")]
+        public void When()
+        {
+            GenerateUpdateCommodityDto();
+
+            expected = () => _sut.Update(_commodity.Code, _dto);
+        }
+
+        private void GenerateUpdateCommodityDto()
+        {
+            _dto = new UpdateCommodityDto
+            {
+                Name = "شیر پر چرب رامک",
+                Price = _commodity.Price,
+                Inventory = _commodity.Inventory,
+                MaxInventory = _commodity.MaxInventory,
+                MinInventory = _commodity.MinInventory,
+                CategoryId = _category.Id,
+            };
+        }
+
+        [Then("در فهرست کالاها تنها یک کالا باید با نام 'شیر پر چرب رامک ' در دسته بندی با عنوان 'لبنیات' وجود داشته باشد")]
         public void Then()
         {
-            _dataContext.Commodities.Where(_ => _.Name == _dto.Name && _.CategoryId==_category.Id)
+            _dataContext.Commodities.Where(_ => _.Name == _dto.Name && _.CategoryId == _category.Id && _.Code != _commodity.Code)
                 .Should().HaveCount(1);
         }
 
@@ -97,6 +113,7 @@ namespace StoreManage.Specs.Commodities
         {
             Given();
             GivenAnd();
+            GivenAnd2();
             When();
             Then();
             ThenAnd();

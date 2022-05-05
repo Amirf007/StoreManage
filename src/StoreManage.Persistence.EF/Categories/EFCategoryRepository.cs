@@ -38,16 +38,6 @@ namespace StoreManage.Persistence.EF.Categories
             return _dataContext.Categories.Find(id);
         }
 
-        public GetCategoryDto GetCategory(int id)
-        {
-            return _dataContext.Categories.Where(_ => _.Id == id).Select(_ => new GetCategoryDto
-            {
-
-                Title= _.Title,
-
-            }).SingleOrDefault();
-        }
-
         public bool IsExistCategoryTitle(string title)
         {
             return _dataContext.Categories.Any(_ => _.Title == title);

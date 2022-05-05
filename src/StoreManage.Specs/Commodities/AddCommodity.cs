@@ -57,8 +57,15 @@ namespace StoreManage.Specs.Commodities
         {
         }
 
-        [When("کالایی با نام 'شیر رامک' و قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد در دسته بندی با عنوان 'لبنیات' تعریف میکنیم")]
+        [When("کالایی با نام 'شیر رامک' و قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد در دسته بندی با عنوان 'لبنیات' تعریف میکنم")]
         public void When()
+        {
+            GenerateAddCommodityDto();
+
+            _sut.Add(_dto);
+        }
+
+        private void GenerateAddCommodityDto()
         {
             _dto = new AddCommodityDto()
             {
@@ -69,8 +76,6 @@ namespace StoreManage.Specs.Commodities
                 MinInventory = "5",
                 CategoryId = _category.Id,
             };
-
-            _sut.Add(_dto);
         }
 
         [Then("کالایی با نام 'شیر رامک' و قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد در  دسته بندی کالا با عنوان 'لبنیات' باید وجود داشته باشد")]

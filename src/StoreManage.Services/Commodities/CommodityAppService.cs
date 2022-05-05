@@ -28,7 +28,7 @@ namespace StoreManage.Services.Commodities
 
         public void Add(AddCommodityDto dto)        
         {
-            var isNameDuplicate = _repository.IsExistNameCommodity(dto.Name);
+            var isNameDuplicate = _repository.IsExistNameCommodity(dto.Name , dto.CategoryId);
 
             if (isNameDuplicate)
             {
@@ -46,6 +46,31 @@ namespace StoreManage.Services.Commodities
             };
 
             _repository.Add(commodity);
+
+            _unitOfWork.Commit();
+        }
+
+        public void Update(int code, UpdateCommodityDto dto)
+        {
+            var commodity = _repository.GetbyId(code);
+            if (commodity == null)
+            {
+                throw new CommodityNotFoundException();
+            }
+
+            var IsExist = _repository
+                .IsExistName(dto.Name,dto.CategoryId,commodity.Code);
+            if (IsExist)
+            {
+                throw new DuplicateCommodityNameInCategoryException();
+            }
+
+            commodity.Name = dto.Name;
+            commodity.Price = dto.Price;
+            commodity.Inventory = dto.Inventory;
+            commodity.MaxInventory = dto.MaxInventory;
+            commodity.MinInventory = dto.MinInventory;
+            commodity.CategoryId = dto.CategoryId;
 
             _unitOfWork.Commit();
         }

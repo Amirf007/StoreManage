@@ -52,7 +52,7 @@ namespace StoreManage.Specs.Categories
         public void When()
         {
             _dto = new UpdateCategoryDto
-            {
+            {   
                 Title = "شیر و ماست"
             };
 

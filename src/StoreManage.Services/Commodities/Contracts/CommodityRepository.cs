@@ -11,6 +11,8 @@ namespace StoreManage.Services.Commodities.Contracts
     public interface CommodityRepository : Repository
     {
         void Add(Commodity commodity);
-        bool IsExistNameCommodity(string name);
+        bool IsExistNameCommodity(string name, int CategoryId);
+        Commodity GetbyId(int code);
+        bool IsExistName(string name,int CategoryId, int code);
     }
 }

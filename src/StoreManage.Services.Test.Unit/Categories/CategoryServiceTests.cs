@@ -125,26 +125,6 @@ namespace StoreManage.Services.Test.Unit.Categories
         }
 
         [Fact]
-        public void GetCategory_return_category_with_Id()
-        {
-            var category = CategoryFactory.CreateCategory();
-            _dataContext.Manipulate(_ => _.Categories.Add(category));
-
-            var Expected = _sut.GetCategory(category.Id);
-
-            Expected.Title.Should().Be(category.Title);
-        }
-
-        [Fact]
-        public void GetCategory_throw_CategoryNotFoundException_when_category_that_you_want_return_given_id_that_not_exist()
-        {
-            var fakecategoryId = 102;
-
-            Action Expected = () => _sut.GetCategory(fakecategoryId);
-            Expected.Should().ThrowExactly<CategoryNotFoundException>();
-        }
-
-        [Fact]
         public void Delete_delete_category_properly()
         {
             var category = CategoryFactory.CreateCategory();

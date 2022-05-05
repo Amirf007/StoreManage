@@ -56,17 +56,6 @@ namespace StoreManage.Services.Categories
            return _repository.GetAll();
         }
 
-        public GetCategoryDto GetCategory(int id)
-        {
-            var category = _repository.GetCategory(id);
-            if (category==null)
-            {
-                throw new CategoryNotFoundException();
-            }
-
-            return category;
-        }
-
         public void Update(int id, UpdateCategoryDto dto)
         {
             Category category = _repository.GetbyId(id);

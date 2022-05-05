@@ -21,24 +21,24 @@ using static StoreManage.Specs.BDDHelper;
 
 namespace StoreManage.Specs.Commodities
 {
-    [Scenario("تعریف کالا با عنوان تکرای در یک دسته بندی")]
+    [Scenario("تعریف کالا با عنوان تکرای")]
     [Feature("",
         AsA = "فروشنده ",
         IWantTo = " کالاها را مدیریت کنم ",
         InOrderTo = "کالا ها را دسته بندی و خرید و فروش کنم"
     )]
-    public class AddCommodityWithDuplicateName : EFDataContextDatabaseFixture
+    public class UpdateCommodity : EFDataContextDatabaseFixture
     {
         private readonly EFDataContext _dataContext;
         private readonly CommodityService _sut;
         private readonly CommodityRepository _commodityrepository;
         private readonly CategoryRepository _categoryRepository;
         private readonly UnitOfWork _unitOfWork;
-        private AddCommodityDto _dto;   
+        private UpdateCommodityDto _dto;
         private Category _category;
         private Commodity _commodity;
         Action expected;
-        public AddCommodityWithDuplicateName(ConfigurationFixture configuration) : base(configuration)
+        public UpdateCommodity(ConfigurationFixture configuration) : base(configuration)
         {
             _dataContext = CreateDataContext();
             _unitOfWork = new EFUnitOfWork(_dataContext);
@@ -47,7 +47,7 @@ namespace StoreManage.Specs.Commodities
             _sut = new CommodityAppService(_commodityrepository, _unitOfWork, _categoryRepository);
         }
 
-        [Given("دسته بندی با عنوان 'لبنیات' در فهرست دسته بندی کالاها وجود دارد")]
+        [Given("دسته بندی با عنوان 'لبنیات'در فهرست دسته بندی کالاها وجود دارد")]
         public void Given()
         {
             _category = CategoryFactory.CreateCategory();
@@ -55,7 +55,7 @@ namespace StoreManage.Specs.Commodities
             _dataContext.Manipulate(_ => _.Categories.Add(_category));
         }
 
-        [Given("کالایی با نام 'شیر رامک' در دسته بندی با عنوان 'لبنیات' وجود دارد")]
+        [Given("کالایی با نام 'شیر رامک' و قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد در دسته بندی با عنوان 'لبنیات' وجود دارد")]
         public void GivenAnd()
         {
             _commodity = CommodityFactory.CreateCommodity(_category.Id);
@@ -63,33 +63,38 @@ namespace StoreManage.Specs.Commodities
             _dataContext.Manipulate(_ => _.Commodities.Add(_commodity));
         }
 
-        [When("کالایی با نام 'شیر رامک' و قیمت '200000' ریال و موجودی '10' عدد و بیشترین موجودی '15' و کمترین موجودی '5' تعریف میکنم")]
+        [When("قیمت کالایی با نام 'شیر رامک' و قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد را ب  '170000' تغییر میدیم")]
         public void When()
         {
-            _dto = new AddCommodityDto
+            GenerateUpdateCommodityDto();
+
+            _sut.Update(_commodity.Code, _dto);
+        }
+
+        private void GenerateUpdateCommodityDto()
+        {
+            _dto = new UpdateCommodityDto
             {
-                Name = _commodity.Name,
-                Price = "200000",
+                Name = "ماست رامک",
+                Price = "170000",
                 Inventory = 10,
                 MaxInventory = "15",
                 MinInventory = "5",
                 CategoryId = _category.Id,
             };
-
-            expected = () => _sut.Add(_dto);
         }
 
-        [Then("تنها یک کالا با نام' شیر رامک ' باید در دسته بندی با عنوان 'لبنیات' وجود داشته باشد")]
+        [Then("در فهرست کالا ها کالایی با نام'شیر رامک' و قیمت '170000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد در دسته بندی با عنوان 'لبنیات' باید وجود داشته باشد")]
         public void Then()
         {
-            _dataContext.Commodities.Where(_ => _.Name == _dto.Name && _.CategoryId==_category.Id)
-                .Should().HaveCount(1);
-        }
+            var expected = _dataContext.Commodities.FirstOrDefault();
 
-        [And("خطایی با عنوان 'نام کالا تکراریست ' باید رخ دهد")]
-        public void ThenAnd()
-        {
-            expected.Should().ThrowExactly<DuplicateCommodityNameInCategoryException>();
+            expected.Name.Should().Be(_dto.Name);
+            expected.Price.Should().Be(_dto.Price);
+            expected.Inventory.Should().Be(_dto.Inventory);
+            expected.MaxInventory.Should().Be(_dto.MaxInventory);
+            expected.MinInventory.Should().Be(_dto.MinInventory);
+            expected.Category.Id.Should().Be(_dto.CategoryId);
         }
 
         [Fact]
@@ -99,7 +104,6 @@ namespace StoreManage.Specs.Commodities
             GivenAnd();
             When();
             Then();
-            ThenAnd();
         }
     }
 }

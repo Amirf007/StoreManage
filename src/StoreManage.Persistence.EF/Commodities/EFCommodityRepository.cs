@@ -22,9 +22,21 @@ namespace StoreManage.Persistence.EF.Commodities
             _dataContext.Commodities.Add(commodity);
         }
 
-        public bool IsExistNameCommodity(string name)
+        public Commodity GetbyId(int code)
         {
-            return _dataContext.Commodities.Any(_ => _.Name==name);
+            return _dataContext.Commodities.Find(code);
+        }
+
+        public bool IsExistName(string name,int CategoryId, int code)
+        {
+            return _dataContext.Commodities
+               .Any(_ => _.Name == name 
+               && _.CategoryId == CategoryId && _.Code != code);
+        }
+
+        public bool IsExistNameCommodity(string name,int CategoryId)
+        {
+            return _dataContext.Commodities.Any(_ => _.Name==name && _.CategoryId == CategoryId);
         }
     }
 }

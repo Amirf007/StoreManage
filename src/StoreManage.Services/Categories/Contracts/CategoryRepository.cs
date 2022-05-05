@@ -14,7 +14,6 @@ namespace StoreManage.Services.Categories.Contracts
         bool IsExistCategoryTitle(string title);
         Category GetbyId(int id);
         IList<GetCategoryDto> GetAll();
-        GetCategoryDto GetCategory(int id);
         void Remove(Category category);
     }
 }

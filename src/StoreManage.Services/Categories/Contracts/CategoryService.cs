@@ -12,7 +12,6 @@ namespace StoreManage.Services.Categories.Contracts
         void Add(AddCategoryDto dto);
         void Update(int id, UpdateCategoryDto dto);
         IList<GetCategoryDto> GetAll();
-        GetCategoryDto GetCategory(int id);
         void Delete(int id);
     }
 }

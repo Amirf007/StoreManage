@@ -83,6 +83,89 @@ namespace StoreManage.Services.Test.Unit.Commodities
             expected.Should().ThrowExactly<DuplicateCommodityNameInCategoryException>();
         }
 
+        [Fact]
+        public void Update_update_commodity_properly()
+        {
+            var category = CategoryFactory.CreateCategory();
+            _dataContext.Manipulate(_ => _.Categories.Add(category));
+
+            var commodity = CommodityFactory.CreateCommodity(category.Id);
+            _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
+
+            UpdateCommodityDto dto = new UpdateCommodityDto
+            {
+                Name = "ماست رامک",
+                Price = "170000",
+                Inventory = 10,
+                MaxInventory = "15",
+                MinInventory = "5",
+                CategoryId = category.Id,
+            };
+
+            _sut.Update(category.Id, dto);
+
+            var Expected = _dataContext.Commodities
+                .FirstOrDefault();
+            Expected.Name.Should().Be(dto.Name);
+            Expected.Price.Should().Be(dto.Price);
+            Expected.Inventory.Should().Be(dto.Inventory);
+            Expected.MaxInventory.Should().Be(dto.MaxInventory);
+            Expected.MinInventory.Should().Be(dto.MinInventory);
+            Expected.Category.Id.Should().Be(dto.CategoryId);
+        }
+
+        [Fact]
+        public void Update_throw_DuplicateCommodityNameInCategoryException_When_commodity_update_with_duplicate_name_and_categoryId_with_different_id()
+        {
+            var category = CategoryFactory.CreateCategory();
+            _dataContext.Manipulate(_ => _.Categories.Add(category));
+
+            var commodity = CommodityFactory.CreateCommodity(category.Id);
+            _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
+
+            var existcommodity = CommodityFactory.CreateCommodity(category.Id);
+            existcommodity.Name = "شیر پر چرب رامک";
+            existcommodity.Price = "170000";
+            existcommodity.Inventory = 9;
+            _dataContext.Manipulate(_ => _.Commodities.Add(existcommodity));
+
+            UpdateCommodityDto dto = GenerateUpdateCommodityDto(category, commodity);
+
+            Action Expected = () => _sut.Update(commodity.Code, dto);
+            Expected.Should()
+                .ThrowExactly<DuplicateCommodityNameInCategoryException>();
+        }
+
+        private static UpdateCommodityDto GenerateUpdateCommodityDto(Entities.Category category, Entities.Commodity commodity)
+        {
+            return new UpdateCommodityDto
+            {
+                Name = "شیر پر چرب رامک",
+                Price = commodity.Price,
+                Inventory = commodity.Inventory,
+                MaxInventory = commodity.MaxInventory,
+                MinInventory = commodity.MinInventory,
+                CategoryId = category.Id,
+            };
+        }
+
+        [Fact]
+        public void Update_throw_CommodityNotFoundException_when_commodity_with_given_id_that_not_exist()
+        {
+            var fakecommodityCode = 100;
+
+            var category = CategoryFactory.CreateCategory();
+            _dataContext.Manipulate(_ => _.Categories.Add(category));
+
+            var commodity = CommodityFactory.CreateCommodity(category.Id);
+            _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
+
+            UpdateCommodityDto dto = GenerateUpdateCommodityDto(category,commodity);
+
+            Action Expected = () => _sut.Update(fakecommodityCode, dto);
+            Expected.Should().ThrowExactly<CommodityNotFoundException>();
+        }
+
         private static AddCommodityDto GenerateAddCommodityDto(Entities.Category category)
         {
             return new AddCommodityDto

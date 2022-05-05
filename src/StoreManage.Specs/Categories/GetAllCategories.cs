@@ -60,7 +60,7 @@ namespace StoreManage.Specs.Categories
             _dataContext.Manipulate(_ => _.Categories.AddRange(categories));
         }
 
-        [When("تمام دسته بندی ها را نمایش میدهیم")]
+        [When("درخواست نمایش فهرست دسته بندی ها را میدهم")]
         public void When()
         {
             expected = _sut.GetAll();
