@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace StoreManage.Services.Commodities.Contracts
 {
-    public class CommodityIsAlreadyExistException : Exception
+    public class DuplicateCommodityNameInCategoryException : Exception
     {
     }
 }
+    

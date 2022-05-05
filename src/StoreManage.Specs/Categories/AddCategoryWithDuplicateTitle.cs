@@ -69,7 +69,7 @@ namespace StoreManage.Specs.Categories
         }
 
         [And("خطایی با عنوان’عنوان کتاب در یک دسته بندی تکراریست’ باید رخ دهد")]
-        public void ThenAnd()
+        public void ThenAnd()       
         {
             expected.Should().ThrowExactly<CategoryIsAlreadyExistException>();
         }
