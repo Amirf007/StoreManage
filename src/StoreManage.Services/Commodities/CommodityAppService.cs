@@ -50,6 +50,19 @@ namespace StoreManage.Services.Commodities
             _unitOfWork.Commit();
         }
 
+        public void Delete(int code)
+        {
+            var commodity = _repository.GetbyId(code);
+            if (commodity==null)
+            {
+                throw new CommodityNotFoundException();
+            }
+
+            _repository.Remove(commodity);
+
+            _unitOfWork.Commit();
+        }
+
         public void Update(int code, UpdateCommodityDto dto)
         {
             var commodity = _repository.GetbyId(code);

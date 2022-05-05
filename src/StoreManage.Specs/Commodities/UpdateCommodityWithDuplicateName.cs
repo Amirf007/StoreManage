@@ -74,7 +74,7 @@ namespace StoreManage.Specs.Commodities
             _dataContext.Manipulate(_ => _.Commodities.Add(existcommodity));
         }
 
-        [When("نام کالایی با نام 'شیر رامک' و قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' و کمترین موجودی '5' را ب  'شیر پر چرب رامک' تغییر میدیم")]
+        [When("نام کالایی با نام 'شیر رامک' و قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' و کمترین موجودی '5' را ب  'شیر پر چرب رامک' تغییر میدم")]
         public void When()
         {
             GenerateUpdateCommodityDto();

@@ -38,5 +38,10 @@ namespace StoreManage.Persistence.EF.Commodities
         {
             return _dataContext.Commodities.Any(_ => _.Name==name && _.CategoryId == CategoryId);
         }
+
+        public void Remove(Commodity commodity)
+        {
+            _dataContext.Commodities.Remove(commodity);
+        }
     }
 }

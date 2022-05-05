@@ -14,5 +14,6 @@ namespace StoreManage.Services.Commodities.Contracts
         bool IsExistNameCommodity(string name, int CategoryId);
         Commodity GetbyId(int code);
         bool IsExistName(string name,int CategoryId, int code);
+        void Remove(Commodity commodity);
     }
 }

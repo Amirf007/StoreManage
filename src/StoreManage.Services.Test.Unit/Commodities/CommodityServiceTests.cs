@@ -68,15 +68,9 @@ namespace StoreManage.Services.Test.Unit.Commodities
             var commodity = CommodityFactory.CreateCommodity(category.Id);
             _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
 
-            var dto = new AddCommodityDto
-            {
-                Name = commodity.Name,
-                Price = "200000",
-                Inventory = 10,
-                MaxInventory = "15",
-                MinInventory = "5",
-                CategoryId = category.Id,
-            };
+            var dto = GenerateAddCommodityDto(category);
+            dto.Name = commodity.Name;
+            dto.Price = "200000";
 
             Action expected = () => _sut.Add(dto);
 
@@ -92,15 +86,9 @@ namespace StoreManage.Services.Test.Unit.Commodities
             var commodity = CommodityFactory.CreateCommodity(category.Id);
             _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
 
-            UpdateCommodityDto dto = new UpdateCommodityDto
-            {
-                Name = "ماست رامک",
-                Price = "170000",
-                Inventory = 10,
-                MaxInventory = "15",
-                MinInventory = "5",
-                CategoryId = category.Id,
-            };
+            UpdateCommodityDto dto = GenerateUpdateCommodityDto(category, commodity);
+            dto.Name = "ماست رامک";
+            dto.Price = "170000";
 
             _sut.Update(category.Id, dto);
 
@@ -163,6 +151,29 @@ namespace StoreManage.Services.Test.Unit.Commodities
             UpdateCommodityDto dto = GenerateUpdateCommodityDto(category,commodity);
 
             Action Expected = () => _sut.Update(fakecommodityCode, dto);
+            Expected.Should().ThrowExactly<CommodityNotFoundException>();
+        }
+
+        [Fact]
+        public void Delete_delete_commodity_properly()
+        {
+            var category = CategoryFactory.CreateCategory();
+            _dataContext.Manipulate(_ => _.Categories.Add(category));
+
+            var commodity = CommodityFactory.CreateCommodity(category.Id);
+            _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
+
+            _sut.Delete(commodity.Code);
+
+            _dataContext.Commodities.Should().HaveCount(0);
+        }
+
+        [Fact]
+        public void Delete_throw_CommodityNotFoundException_when_commodity_that_want_to_be_delete_given_id_that_not_exist()
+        {
+            var fakecommodityId = 100;
+
+            Action Expected = () => _sut.Delete(fakecommodityId);
             Expected.Should().ThrowExactly<CommodityNotFoundException>();
         }
 

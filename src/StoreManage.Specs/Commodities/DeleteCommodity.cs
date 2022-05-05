@@ -21,23 +21,22 @@ using static StoreManage.Specs.BDDHelper;
 
 namespace StoreManage.Specs.Commodities
 {
-    [Scenario("ویرایش کالا")]
+    [Scenario("حذف کالا")]
     [Feature("",
-        AsA = "فروشنده ",
-        IWantTo = " کالاها را مدیریت کنم ",
-        InOrderTo = "کالا ها را دسته بندی و خرید و فروش کنم"
-    )]
-    public class UpdateCommodity : EFDataContextDatabaseFixture
+       AsA = "فروشنده ",
+       IWantTo = " کالاها را مدیریت کنم ",
+       InOrderTo = "کالا ها را دسته بندی و خرید و فروش کنم"
+   )]
+    public class DeleteCommodity : EFDataContextDatabaseFixture
     {
         private readonly EFDataContext _dataContext;
         private readonly CommodityService _sut;
         private readonly CommodityRepository _commodityrepository;
         private readonly CategoryRepository _categoryRepository;
         private readonly UnitOfWork _unitOfWork;
-        private UpdateCommodityDto _dto;
         private Category _category;
         private Commodity _commodity;
-        public UpdateCommodity(ConfigurationFixture configuration) : base(configuration)
+        public DeleteCommodity(ConfigurationFixture configuration) : base(configuration)
         {
             _dataContext = CreateDataContext();
             _unitOfWork = new EFUnitOfWork(_dataContext);
@@ -62,38 +61,16 @@ namespace StoreManage.Specs.Commodities
             _dataContext.Manipulate(_ => _.Commodities.Add(_commodity));
         }
 
-        [When("قیمت کالایی با نام 'شیر رامک' و قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد را ب  '170000' تغییر میدیم")]
+        [When("کالا با نام 'شیر رامک' و قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد را حذف میکنم")]
         public void When()
         {
-            GenerateUpdateCommodityDto();
-
-            _sut.Update(_commodity.Code, _dto);
+            _sut.Delete(_commodity.Code);
         }
 
-        private void GenerateUpdateCommodityDto()
-        {
-            _dto = new UpdateCommodityDto
-            {
-                Name = "ماست رامک",
-                Price = "170000",
-                Inventory = 10,
-                MaxInventory = "15",
-                MinInventory = "5",
-                CategoryId = _category.Id,
-            };
-        }
-
-        [Then("در فهرست کالا ها کالایی با نام'شیر رامک' و قیمت '170000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد در دسته بندی با عنوان 'لبنیات' باید وجود داشته باشد")]
+        [Then("هیچ کالایی درفهرست کالاها نیاید وجود داشته باشد")]
         public void Then()
         {
-            var expected = _dataContext.Commodities.FirstOrDefault();
-
-            expected.Name.Should().Be(_dto.Name);
-            expected.Price.Should().Be(_dto.Price);
-            expected.Inventory.Should().Be(_dto.Inventory);
-            expected.MaxInventory.Should().Be(_dto.MaxInventory);
-            expected.MinInventory.Should().Be(_dto.MinInventory);
-            expected.Category.Id.Should().Be(_dto.CategoryId);
+            _dataContext.Commodities.Should().HaveCount(0);
         }
 
         [Fact]
