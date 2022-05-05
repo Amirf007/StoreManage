@@ -15,7 +15,8 @@ namespace StoreManage.Services.Commodities
         private readonly CommodityRepository _repository;
         private readonly UnitOfWork _unitOfWork;
         private readonly CategoryRepository _categoryRepository;
-
+        private CommodityRepository repository;
+        private UnitOfWork unitOfWork;
         public CommodityAppService(
             CommodityRepository repositoy,
             UnitOfWork unitOfWork,
@@ -61,6 +62,11 @@ namespace StoreManage.Services.Commodities
             _repository.Remove(commodity);
 
             _unitOfWork.Commit();
+        }
+
+        public IList<GetCommodityDto> GetAll()
+        {
+            return _repository.GetAll();
         }
 
         public void Update(int code, UpdateCommodityDto dto)

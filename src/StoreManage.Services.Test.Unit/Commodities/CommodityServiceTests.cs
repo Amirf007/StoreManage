@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using StoreManage.Entities;
 using StoreManage.Infrastructure.Application;
 using StoreManage.Infrastructure.Test;
 using StoreManage.Persistence.EF;
@@ -175,6 +176,42 @@ namespace StoreManage.Services.Test.Unit.Commodities
 
             Action Expected = () => _sut.Delete(fakecommodityId);
             Expected.Should().ThrowExactly<CommodityNotFoundException>();
+        }
+
+        [Fact]
+        public void Getall_return_all_commodities_properly()
+        {
+            var category = CategoryFactory.CreateCategory();
+            _dataContext.Manipulate(_ => _.Categories.Add(category));
+
+            var commodities = new List<Commodity>
+            {
+                new Commodity
+                {
+                 Name = "شیر رامک",
+                Price = "150000",
+                Inventory = 10,
+                MaxInventory = "15",
+                MinInventory = "5",
+                CategoryId = category.Id,
+                },
+                new Commodity
+                {
+                 Name = "دوغ رامک",
+                Price = "120000",
+                Inventory = 15,
+                MaxInventory = "20",
+                MinInventory = "7",
+                CategoryId = category.Id,
+                },
+            };
+            _dataContext.Manipulate(_ => _.Commodities.AddRange(commodities));
+
+            var expected = _sut.GetAll();
+
+            expected.Should().HaveCount(2);
+            expected.Should().Contain(_ => _.Name == "شیر رامک" && _.Price == "150000" && _.Inventory == 10 && _.MaxInventory == "15" && _.MinInventory == "5" && _.CategoryId == category.Id);
+            expected.Should().Contain(_ => _.Name == "دوغ رامک" && _.Price == "120000" && _.Inventory == 15 && _.MaxInventory == "20" && _.MinInventory == "7" && _.CategoryId == category.Id);
         }
 
         private static AddCommodityDto GenerateAddCommodityDto(Entities.Category category)

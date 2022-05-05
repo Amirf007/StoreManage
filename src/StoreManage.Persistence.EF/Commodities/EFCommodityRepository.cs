@@ -22,6 +22,22 @@ namespace StoreManage.Persistence.EF.Commodities
             _dataContext.Commodities.Add(commodity);
         }
 
+        public IList<GetCommodityDto> GetAll()
+        {
+            return _dataContext.Commodities
+                  .Select(_ => new GetCommodityDto
+                  {
+                     
+                      Name = _.Name,
+                      Price = _.Price,
+                      Inventory = _.Inventory,
+                      MaxInventory = _.MaxInventory,
+                      MinInventory = _.MinInventory,
+                      CategoryId = _.CategoryId,
+
+                  }).ToList();
+        }
+
         public Commodity GetbyId(int code)
         {
             return _dataContext.Commodities.Find(code);
