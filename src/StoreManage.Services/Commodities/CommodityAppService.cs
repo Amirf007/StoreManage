@@ -69,6 +69,18 @@ namespace StoreManage.Services.Commodities
             return _repository.GetAll();
         }
 
+        public GetCommodityDto GetCommodity(int code)
+        {
+            var commodity = _repository.GetCommodity(code);
+
+            if (commodity==null)
+            {
+                throw new CommodityNotFoundException();
+            }
+
+            return commodity;
+        }
+
         public void Update(int code, UpdateCommodityDto dto)
         {
             var commodity = _repository.GetbyId(code);

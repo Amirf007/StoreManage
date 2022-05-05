@@ -13,5 +13,6 @@ namespace StoreManage.Services.Commodities.Contracts
         void Update(int code, UpdateCommodityDto dto);
         void Delete(int code);
         IList<GetCommodityDto> GetAll();
+        GetCommodityDto GetCommodity(int code);
     }
 }

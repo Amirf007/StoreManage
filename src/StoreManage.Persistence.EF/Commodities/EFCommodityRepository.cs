@@ -43,6 +43,20 @@ namespace StoreManage.Persistence.EF.Commodities
             return _dataContext.Commodities.Find(code);
         }
 
+        public GetCommodityDto GetCommodity(int code)
+        {
+            return _dataContext.Commodities.Where(_ => _.Code == code).Select(_ => new GetCommodityDto
+            {
+                Name = _.Name,
+                Price = _.Price,
+                Inventory = _.Inventory,
+                MaxInventory = _.MaxInventory,
+                MinInventory = _.MinInventory,
+                CategoryId = _.CategoryId,
+
+            }).SingleOrDefault();
+        }
+
         public bool IsExistName(string name,int CategoryId, int code)
         {
             return _dataContext.Commodities

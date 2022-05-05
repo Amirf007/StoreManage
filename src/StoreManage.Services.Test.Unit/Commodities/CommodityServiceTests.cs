@@ -188,7 +188,7 @@ namespace StoreManage.Services.Test.Unit.Commodities
             {
                 new Commodity
                 {
-                 Name = "شیر رامک",
+                Name = "شیر رامک",
                 Price = "150000",
                 Inventory = 10,
                 MaxInventory = "15",
@@ -197,7 +197,7 @@ namespace StoreManage.Services.Test.Unit.Commodities
                 },
                 new Commodity
                 {
-                 Name = "دوغ رامک",
+                Name = "دوغ رامک",
                 Price = "120000",
                 Inventory = 15,
                 MaxInventory = "20",
@@ -212,6 +212,34 @@ namespace StoreManage.Services.Test.Unit.Commodities
             expected.Should().HaveCount(2);
             expected.Should().Contain(_ => _.Name == "شیر رامک" && _.Price == "150000" && _.Inventory == 10 && _.MaxInventory == "15" && _.MinInventory == "5" && _.CategoryId == category.Id);
             expected.Should().Contain(_ => _.Name == "دوغ رامک" && _.Price == "120000" && _.Inventory == 15 && _.MaxInventory == "20" && _.MinInventory == "7" && _.CategoryId == category.Id);
+        }
+
+        [Fact]
+        public void GetCommodity_return_commodity_with_Id()
+        {
+            var category = CategoryFactory.CreateCategory();
+            _dataContext.Manipulate(_ => _.Categories.Add(category));
+
+            var commodity = CommodityFactory.CreateCommodity(category.Id);
+            _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
+
+            var expected = _sut.GetCommodity(commodity.Code);
+
+            expected.Name.Should().Be(commodity.Name);
+            expected.Price.Should().Be(commodity.Price);
+            expected.Inventory.Should().Be(commodity.Inventory);
+            expected.MaxInventory.Should().Be(commodity.MaxInventory);
+            expected.MinInventory.Should().Be(commodity.MinInventory);
+            expected.CategoryId.Should().Be(category.Id);
+        }
+
+        [Fact]
+        public void GetCommodity_throw_CommodityNotFoundException_when_commodity_that_you_want_return_given_id_that_not_exist()
+        {
+            var fakecommodityId = 102;
+
+            Action Expected = () => _sut.GetCommodity(fakecommodityId);
+            Expected.Should().ThrowExactly<CommodityNotFoundException>();
         }
 
         private static AddCommodityDto GenerateAddCommodityDto(Entities.Category category)
