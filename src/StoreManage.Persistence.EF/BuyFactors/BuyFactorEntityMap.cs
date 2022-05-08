@@ -27,8 +27,7 @@ namespace StoreManage.Persistence.EF.BuyFactors
                 .HasMaxLength(50);
 
             _.Property(_ => _.Count)
-                .IsRequired()
-                .HasMaxLength(50);
+                .IsRequired();
 
             _.Property(_ => _.SellerName)
                 .IsRequired()

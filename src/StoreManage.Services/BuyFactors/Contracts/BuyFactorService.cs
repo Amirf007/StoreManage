@@ -9,5 +9,6 @@ namespace StoreManage.Services.BuyFactors.Contracts
 {
     public interface BuyFactorService : Service
     {
+        void Add(AddBuyFactorDto dto);
     }
 }

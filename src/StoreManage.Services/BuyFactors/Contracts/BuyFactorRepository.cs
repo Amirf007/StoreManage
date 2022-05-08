@@ -1,4 +1,5 @@
-﻿using StoreManage.Infrastructure.Application;
+﻿using StoreManage.Entities;
+using StoreManage.Infrastructure.Application;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,5 +10,6 @@ namespace StoreManage.Services.BuyFactors.Contracts
 {
     public interface BuyFactorRepository : Repository
     {
+        void Add(BuyFactor buyfactor);
     }
 }

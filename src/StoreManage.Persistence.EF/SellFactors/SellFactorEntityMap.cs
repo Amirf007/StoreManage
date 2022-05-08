@@ -23,8 +23,7 @@ namespace StoreManage.Persistence.EF.SellFactors
                 .IsRequired();
 
             _.Property(_ => _.Count)
-                .IsRequired()
-                .HasMaxLength(50);
+                .IsRequired();
 
             _.Property(_ => _.BasePrice)
                 .IsRequired()

@@ -1,4 +1,5 @@
-﻿using StoreManage.Services.BuyFactors.Contracts;
+﻿using StoreManage.Entities;
+using StoreManage.Services.BuyFactors.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,11 @@ namespace StoreManage.Persistence.EF.BuyFactors
         public EFBuyFactorRepository(EFDataContext dataContext)
         {
             _dataContext = dataContext;
+        }
+
+        public void Add(BuyFactor buyfactor)
+        {
+            _dataContext.Add(buyfactor);
         }
     }
 }

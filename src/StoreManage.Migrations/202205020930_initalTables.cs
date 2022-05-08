@@ -43,7 +43,7 @@ namespace StoreManage.Migrations
             Create.Table("SellFactors")
                  .WithColumn("SellFactorNumber").AsInt32().PrimaryKey().NotNullable().Identity()
                 .WithColumn("Date").AsDateTime().NotNullable()
-                .WithColumn("Count").AsString(50).NotNullable()
+                .WithColumn("Count").AsInt32().NotNullable()
                 .WithColumn("BasePrice").AsString(50).NotNullable()
                 .WithColumn("TotalPrice").AsString(50).NotNullable()
                 .WithColumn("BuyerName").AsString(50).NotNullable()
@@ -56,7 +56,7 @@ namespace StoreManage.Migrations
                              .WithColumn("BuyFactorNumber").AsInt32().PrimaryKey().NotNullable().Identity()
                             .WithColumn("Date").AsDateTime().NotNullable()
                             .WithColumn("BuyPrice").AsString(50).NotNullable()
-                            .WithColumn("Count").AsString(50).NotNullable()
+                            .WithColumn("Count").AsInt32().NotNullable()
                             .WithColumn("SellerName").AsString(50).NotNullable()
                             .WithColumn("CommodityCode").AsInt32().NotNullable();
         }
