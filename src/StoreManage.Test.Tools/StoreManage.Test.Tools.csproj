@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\StoreManage.Entities\StoreManage.Entities.csproj" />
+    <ProjectReference Include="..\StoreManage.Services\StoreManage.Services.csproj" />
   </ItemGroup>
 
 </Project>

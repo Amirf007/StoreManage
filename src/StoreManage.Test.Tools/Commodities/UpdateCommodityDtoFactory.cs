@@ -1,4 +1,4 @@
-﻿using StoreManage.Entities;
+﻿using StoreManage.Services.Commodities.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,15 +7,14 @@ using System.Threading.Tasks;
 
 namespace StoreManage.Test.Tools.Commodities
 {
-    public static class CommodityFactory
+    public static class UpdateCommodityDtoFactory
     {
-        public static Commodity CreateCommodity(int categoryId)
+        public static UpdateCommodityDto GenerateUpdateCommodityDto(int categoryId)
         {
-            return new Commodity
+            return new UpdateCommodityDto
             {
-                Code = 1,
                 Name = "شیر رامک",
-                Price = "150000",
+                Price = "170000",
                 Inventory = 10,
                 MaxInventory = "15",
                 MinInventory = "5",

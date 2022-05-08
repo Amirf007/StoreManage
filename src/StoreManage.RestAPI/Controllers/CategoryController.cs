@@ -20,12 +20,6 @@ namespace StoreManage.RestAPI.Controllers
             _service.Add(dto);
         }
 
-        [HttpGet("{id}")]
-        public GetCategoryDto GetCategory(int id)
-        {
-            return _service.GetCategory(id);
-        }
-
         [HttpGet]
         public IList<GetCategoryDto> Getall()
         {

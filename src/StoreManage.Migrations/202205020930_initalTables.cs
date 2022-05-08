@@ -64,8 +64,8 @@ namespace StoreManage.Migrations
         private void CreateCommoditiesTable()
         {
             Create.Table("Commodities")
-                 .WithColumn("Code").AsInt32().PrimaryKey().NotNullable().Identity()
-                .WithColumn("Name").AsString(50).Unique().NotNullable()
+                .WithColumn("Code").AsInt32().PrimaryKey().NotNullable()
+                .WithColumn("Name").AsString(50).NotNullable()
                 .WithColumn("Price").AsString(50).NotNullable()
                 .WithColumn("Inventory").AsInt32().NotNullable()
                 .WithColumn("MaxInventory").AsString(50).NotNullable()

@@ -45,7 +45,7 @@ namespace StoreManage.Services.Test.Unit.Commodities
             var category = CategoryFactory.CreateCategory();
             _dataContext.Manipulate(_ => _.Categories.Add(category));
 
-            AddCommodityDto dto = GenerateAddCommodityDto(category);
+            AddCommodityDto dto = AddCommodityDtoFactory.GenerateAddCommodityDto(category.Id);
 
             _sut.Add(dto);
 
@@ -69,7 +69,7 @@ namespace StoreManage.Services.Test.Unit.Commodities
             var commodity = CommodityFactory.CreateCommodity(category.Id);
             _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
 
-            var dto = GenerateAddCommodityDto(category);
+            var dto = AddCommodityDtoFactory.GenerateAddCommodityDto(category.Id);
             dto.Name = commodity.Name;
             dto.Price = "200000";
 
@@ -87,7 +87,7 @@ namespace StoreManage.Services.Test.Unit.Commodities
             var commodity = CommodityFactory.CreateCommodity(category.Id);
             _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
 
-            UpdateCommodityDto dto = GenerateUpdateCommodityDto(category, commodity);
+            UpdateCommodityDto dto = UpdateCommodityDtoFactory.GenerateUpdateCommodityDto(category.Id);
             dto.Name = "ماست رامک";
             dto.Price = "170000";
 
@@ -113,29 +113,18 @@ namespace StoreManage.Services.Test.Unit.Commodities
             _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
 
             var existcommodity = CommodityFactory.CreateCommodity(category.Id);
+            existcommodity.Code = 2;
             existcommodity.Name = "شیر پر چرب رامک";
             existcommodity.Price = "170000";
             existcommodity.Inventory = 9;
             _dataContext.Manipulate(_ => _.Commodities.Add(existcommodity));
 
-            UpdateCommodityDto dto = GenerateUpdateCommodityDto(category, commodity);
+            UpdateCommodityDto dto = UpdateCommodityDtoFactory.GenerateUpdateCommodityDto(category.Id);
+            dto.Name = existcommodity.Name;
 
             Action Expected = () => _sut.Update(commodity.Code, dto);
             Expected.Should()
                 .ThrowExactly<DuplicateCommodityNameInCategoryException>();
-        }
-
-        private static UpdateCommodityDto GenerateUpdateCommodityDto(Entities.Category category, Entities.Commodity commodity)
-        {
-            return new UpdateCommodityDto
-            {
-                Name = "شیر پر چرب رامک",
-                Price = commodity.Price,
-                Inventory = commodity.Inventory,
-                MaxInventory = commodity.MaxInventory,
-                MinInventory = commodity.MinInventory,
-                CategoryId = category.Id,
-            };
         }
 
         [Fact]
@@ -149,7 +138,7 @@ namespace StoreManage.Services.Test.Unit.Commodities
             var commodity = CommodityFactory.CreateCommodity(category.Id);
             _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
 
-            UpdateCommodityDto dto = GenerateUpdateCommodityDto(category,commodity);
+            UpdateCommodityDto dto = UpdateCommodityDtoFactory.GenerateUpdateCommodityDto(category.Id);
 
             Action Expected = () => _sut.Update(fakecommodityCode, dto);
             Expected.Should().ThrowExactly<CommodityNotFoundException>();
@@ -184,27 +173,7 @@ namespace StoreManage.Services.Test.Unit.Commodities
             var category = CategoryFactory.CreateCategory();
             _dataContext.Manipulate(_ => _.Categories.Add(category));
 
-            var commodities = new List<Commodity>
-            {
-                new Commodity
-                {
-                Name = "شیر رامک",
-                Price = "150000",
-                Inventory = 10,
-                MaxInventory = "15",
-                MinInventory = "5",
-                CategoryId = category.Id,
-                },
-                new Commodity
-                {
-                Name = "دوغ رامک",
-                Price = "120000",
-                Inventory = 15,
-                MaxInventory = "20",
-                MinInventory = "7",
-                CategoryId = category.Id,
-                },
-            };
+            var commodities = CommoditiesFactory.GenerateCommodities(category.Id);
             _dataContext.Manipulate(_ => _.Commodities.AddRange(commodities));
 
             var expected = _sut.GetAll();
@@ -240,19 +209,6 @@ namespace StoreManage.Services.Test.Unit.Commodities
 
             Action Expected = () => _sut.GetCommodity(fakecommodityId);
             Expected.Should().ThrowExactly<CommodityNotFoundException>();
-        }
-
-        private static AddCommodityDto GenerateAddCommodityDto(Entities.Category category)
-        {
-            return new AddCommodityDto
-            {
-                Name = "شیر رامک",
-                Price = "150000",
-                Inventory = 10,
-                MaxInventory = "15",
-                MinInventory = "5",
-                CategoryId = category.Id,
-            };
         }
     }
 }

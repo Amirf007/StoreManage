@@ -37,6 +37,7 @@ namespace StoreManage.Specs.Commodities
         private UpdateCommodityDto _dto;
         private Category _category;
         private Commodity _commodity;
+        private Commodity _existcommodity;
         Action expected;
         public UpdateCommodityWithDuplicateName(ConfigurationFixture configuration) : base(configuration)
         {
@@ -66,33 +67,22 @@ namespace StoreManage.Specs.Commodities
         [Given("و : کالایی با نام 'شیر پر چرب رامک' و قیمت '170000' ریال و موجودی '9' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد در دسته بندی با عنوان 'لبنیات' وجود دارد")]
         public void GivenAnd2()
         {
-            var existcommodity = CommodityFactory.CreateCommodity(_category.Id);
-            existcommodity.Name = "شیر پر چرب رامک";
-            existcommodity.Price = "170000";
-            existcommodity.Inventory = 9;
+            _existcommodity = CommodityFactory.CreateCommodity(_category.Id);
+            _existcommodity.Code = 2;
+            _existcommodity.Name = "شیر پر چرب رامک";
+            _existcommodity.Price = "170000";
+            _existcommodity.Inventory = 9;
 
-            _dataContext.Manipulate(_ => _.Commodities.Add(existcommodity));
+            _dataContext.Manipulate(_ => _.Commodities.Add(_existcommodity));
         }
 
         [When("نام کالایی با نام 'شیر رامک' و قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' و کمترین موجودی '5' را ب  'شیر پر چرب رامک' تغییر میدم")]
         public void When()
         {
-            GenerateUpdateCommodityDto();
+            _dto = UpdateCommodityDtoFactory.GenerateUpdateCommodityDto(_category.Id);
+            _dto.Name = _existcommodity.Name;
 
             expected = () => _sut.Update(_commodity.Code, _dto);
-        }
-
-        private void GenerateUpdateCommodityDto()
-        {
-            _dto = new UpdateCommodityDto
-            {
-                Name = "شیر پر چرب رامک",
-                Price = _commodity.Price,
-                Inventory = _commodity.Inventory,
-                MaxInventory = _commodity.MaxInventory,
-                MinInventory = _commodity.MinInventory,
-                CategoryId = _category.Id,
-            };
         }
 
         [Then("در فهرست کالاها تنها یک کالا باید با نام 'شیر پر چرب رامک ' در دسته بندی با عنوان 'لبنیات' وجود داشته باشد")]

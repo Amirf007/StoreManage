@@ -69,7 +69,11 @@ namespace StoreManage.Services.Test.Unit.Categories
         {
             var category = CategoryFactory.CreateCategory();
             _dataContext.Manipulate(_ => _.Categories.Add(category));
-            UpdateCategoryDto dto = GenerateUpdateCategoryDto();
+
+            UpdateCategoryDto dto = new UpdateCategoryDto
+            {
+                Title = "شیر و ماست"
+            };
 
             _sut.Update(category.Id, dto);
 
@@ -78,20 +82,15 @@ namespace StoreManage.Services.Test.Unit.Categories
             Expected.Title.Should().Be(dto.Title);
         }
 
-        private static UpdateCategoryDto GenerateUpdateCategoryDto()
-        {
-            return new UpdateCategoryDto
-            {
-                Title = "شیر و ماست"
-            };
-        }
-
         [Fact]
         public void Update_throw_CategoryNotFoundException_when_category_with_given_id_that_not_exists()
         {
             var fakeCategoryId = 100;
 
-            UpdateCategoryDto dto = GenerateUpdateCategoryDto();
+            UpdateCategoryDto dto = new UpdateCategoryDto
+            {
+                Title = "شیر و ماست"
+            };
 
             Action Expected = () => _sut.Update(fakeCategoryId, dto);
             Expected.Should().ThrowExactly<CategoryNotFoundException>();
@@ -103,7 +102,10 @@ namespace StoreManage.Services.Test.Unit.Categories
             var category = CategoryFactory.CreateCategory();
             _dataContext.Manipulate(_ => _.Categories.Add(category));
 
-            UpdateCategoryDto dto = GenerateUpdateCategoryDto();
+            UpdateCategoryDto dto = new UpdateCategoryDto
+            {
+                Title = "شیر و ماست"
+            };
             dto.Title = category.Title;
 
             Action Expected = () => _sut.Update(category.Id,dto);
@@ -114,7 +116,8 @@ namespace StoreManage.Services.Test.Unit.Categories
         [Fact]
         public void Getall_return_all_categories_properly()
         {
-            GenerateCategoriesInDataBase();
+            var categories = CategoriesFactory.GenerateCategories();
+            _dataContext.Manipulate(_ => _.Categories.AddRange(categories));
 
             var expected = _sut.GetAll();
 
@@ -142,26 +145,6 @@ namespace StoreManage.Services.Test.Unit.Categories
 
             Action Expected = () => _sut.Delete(fakecategoryId);
             Expected.Should().ThrowExactly<CategoryNotFoundException>();
-        }
-
-        private void GenerateCategoriesInDataBase()
-        {
-            var categories = new List<Category>
-            {
-                new Category
-                {
-                Title = "لبنیات"
-                },
-                new Category
-                {
-                Title = "تنقلات"
-                },
-                new Category
-                {
-                Title = "شوینده ها"
-                }
-            };
-            _dataContext.Manipulate(_ => _.Categories.AddRange(categories));
         }
     }
 }

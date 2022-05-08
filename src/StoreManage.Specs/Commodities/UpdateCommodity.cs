@@ -65,22 +65,9 @@ namespace StoreManage.Specs.Commodities
         [When("قیمت کالایی با نام 'شیر رامک' و قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد را ب  '170000' تغییر میدیم")]
         public void When()
         {
-            GenerateUpdateCommodityDto();
+            _dto = UpdateCommodityDtoFactory.GenerateUpdateCommodityDto(_category.Id);
 
             _sut.Update(_commodity.Code, _dto);
-        }
-
-        private void GenerateUpdateCommodityDto()
-        {
-            _dto = new UpdateCommodityDto
-            {
-                Name = "ماست رامک",
-                Price = "170000",
-                Inventory = 10,
-                MaxInventory = "15",
-                MinInventory = "5",
-                CategoryId = _category.Id,
-            };
         }
 
         [Then("در فهرست کالا ها کالایی با نام'شیر رامک' و قیمت '170000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد در دسته بندی با عنوان 'لبنیات' باید وجود داشته باشد")]

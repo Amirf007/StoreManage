@@ -10,6 +10,7 @@ using StoreManage.Services.Commodities;
 using StoreManage.Services.Commodities.Contracts;
 using StoreManage.Specs.Infrastructure;
 using StoreManage.Test.Tools.Categories;
+using StoreManage.Test.Tools.Commodities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,22 +61,9 @@ namespace StoreManage.Specs.Commodities
         [When("کالایی با نام 'شیر رامک' و قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد در دسته بندی با عنوان 'لبنیات' تعریف میکنم")]
         public void When()
         {
-            GenerateAddCommodityDto();
+            _dto = AddCommodityDtoFactory.GenerateAddCommodityDto(_category.Id);
 
             _sut.Add(_dto);
-        }
-
-        private void GenerateAddCommodityDto()
-        {
-            _dto = new AddCommodityDto()
-            {
-                Name = "شیر رامک",
-                Price = "150000",
-                Inventory = 10,
-                MaxInventory = "15",
-                MinInventory = "5",
-                CategoryId = _category.Id,
-            };
         }
 
         [Then("کالایی با نام 'شیر رامک' و قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد در  دسته بندی کالا با عنوان 'لبنیات' باید وجود داشته باشد")]

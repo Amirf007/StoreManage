@@ -9,5 +9,11 @@ namespace StoreManage.Persistence.EF.BuyFactors
 {
     public class EFBuyFactorRepository : BuyFactorRepository
     {
+        private EFDataContext _dataContext;
+
+        public EFBuyFactorRepository(EFDataContext dataContext)
+        {
+            _dataContext = dataContext;
+        }
     }
 }

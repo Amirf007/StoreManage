@@ -38,6 +38,7 @@ namespace StoreManage.Services.Commodities
 
             var commodity = new Commodity
             {
+                Code = dto.Code,
                 Name = dto.Name,
                 Price = dto.Price,
                 Inventory = dto.Inventory,

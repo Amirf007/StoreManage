@@ -7,6 +7,7 @@ using StoreManage.Persistence.EF.Categories;
 using StoreManage.Services.Categories;
 using StoreManage.Services.Categories.Contracts;
 using StoreManage.Specs.Infrastructure;
+using StoreManage.Test.Tools.Categories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,21 +43,8 @@ namespace StoreManage.Specs.Categories
         [Given("دسته بندی هایی با عنوان های 'لبنیات' و 'تنقلات' و 'شوینده ها' در فهرست دسته بندی های کالاها وجود دارد")]
         public void Given()
         {
-            var categories = new List<Category>
-            {
-                new Category
-                {
-                Title = "لبنیات"
-                },
-                new Category
-                {
-                Title = "تنقلات"
-                },
-                new Category
-                {
-                Title = "شوینده ها"
-                }
-            };
+            var categories = CategoriesFactory.GenerateCategories();
+
             _dataContext.Manipulate(_ => _.Categories.AddRange(categories));
         }
 

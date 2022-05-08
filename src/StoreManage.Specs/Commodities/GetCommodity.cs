@@ -52,7 +52,7 @@ namespace StoreManage.Specs.Commodities
             _dataContext.Manipulate(_ => _.Categories.Add(_category));
         }
 
-        [Given("کالایی با نام 'ماست رامک' با قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد در فهرست کالاها در دسته بندی با عنوان 'لبنیات' وجود دارد")]
+        [Given("کالایی با نام 'شیر رامک' با قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد در فهرست کالاها در دسته بندی با عنوان 'لبنیات' وجود دارد")]
         public void GivenAnd()
         {
             _commodity = CommodityFactory.CreateCommodity(_category.Id);
@@ -66,7 +66,7 @@ namespace StoreManage.Specs.Commodities
             expected = _sut.GetCommodity(_commodity.Code);
         }
 
-        [Then("کالایی با نام 'ماست رامک' و قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد در  دسته بندی کالا با عنوان 'لبنیات' باید وجود داشته باشد")]
+        [Then("کالایی با نام 'شیر رامک' و قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد در  دسته بندی کالا با عنوان 'لبنیات' باید وجود داشته باشد")]
         public void Then()
         {
             var expected = _dataContext.Commodities.FirstOrDefault();

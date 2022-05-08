@@ -17,7 +17,7 @@ namespace StoreManage.Persistence.EF.Commodities
 
             _.HasKey(_ => _.Code);
             _.Property(_ => _.Code)
-                .ValueGeneratedOnAdd();
+                .IsRequired();
 
             _.Property(_ => _.Name)
                 .IsRequired()
@@ -41,6 +41,18 @@ namespace StoreManage.Persistence.EF.Commodities
 
             _.Property(_ => _.CategoryId)
                 .IsRequired();
+
+            _.HasOne(_ => _.Category)
+                .WithMany(_ => _.Commodities)
+                .HasForeignKey(_ => _.CategoryId);
+
+            _.HasMany(_ => _.BuyFactors)
+                .WithOne(_ => _.Commodity)
+                .HasForeignKey(_ => _.CommodityCode);
+
+            _.HasMany(_ => _.SellFactors)
+                .WithOne(_ => _.Commodity)
+                .HasForeignKey(_ => _.CommodityCode);
         }
     }
 }

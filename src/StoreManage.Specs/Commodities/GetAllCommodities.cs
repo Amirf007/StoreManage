@@ -9,6 +9,7 @@ using StoreManage.Services.Commodities;
 using StoreManage.Services.Commodities.Contracts;
 using StoreManage.Specs.Infrastructure;
 using StoreManage.Test.Tools.Categories;
+using StoreManage.Test.Tools.Commodities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,27 +54,8 @@ namespace StoreManage.Specs.Commodities
         [Given("کالاهایی با نام های 'شیر رامک' و 'دوغ رامک' با قیمت های '150000' و '120000' و موجودی های '10' عدد و '15' عدد و بیشترین موجودی های '15' عدد و '20' عدد و کمترین موجودی های '5' عدد و '7' عدد در فهرست کالاها در دسته بندی با عنوان 'لبنیات' وجود دارد")]
         public void GivenAnd()
         {
-            var commodities = new List<Commodity>
-            {
-                new Commodity
-                {
-                 Name = "شیر رامک",
-                Price = "150000",
-                Inventory = 10,
-                MaxInventory = "15",
-                MinInventory = "5",
-                CategoryId = _category.Id,
-                },
-                new Commodity
-                {
-                 Name = "دوغ رامک",
-                Price = "120000",
-                Inventory = 15,
-                MaxInventory = "20",
-                MinInventory = "7",
-                CategoryId = _category.Id,
-                },
-            };
+            var commodities = CommoditiesFactory.GenerateCommodities(_category.Id);
+
             _dataContext.Manipulate(_ => _.Commodities.AddRange(commodities));
         }
 

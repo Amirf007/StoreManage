@@ -66,15 +66,8 @@ namespace StoreManage.Specs.Commodities
         [When("کالایی با نام 'شیر رامک' و قیمت '200000' ریال و موجودی '10' عدد و بیشترین موجودی '15' و کمترین موجودی '5' تعریف میکنم")]
         public void When()
         {
-            _dto = new AddCommodityDto
-            {
-                Name = _commodity.Name,
-                Price = "200000",
-                Inventory = 10,
-                MaxInventory = "15",
-                MinInventory = "5",
-                CategoryId = _category.Id,
-            };
+            _dto = AddCommodityDtoFactory.GenerateAddCommodityDto(_category.Id);
+            _dto.Price = "200000";
 
             expected = () => _sut.Add(_dto);
         }
