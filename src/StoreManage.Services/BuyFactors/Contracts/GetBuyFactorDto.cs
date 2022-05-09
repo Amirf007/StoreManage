@@ -11,7 +11,7 @@ namespace StoreManage.Services.BuyFactors.Contracts
         public int BuyFactorNumber { get; set; }
         public DateTime Date { get; set; }
         public string BuyPrice { get; set; }
-        public string Count { get; set; }
+        public int Count { get; set; }
         public string SellerName { get; set; }
         public int CommodityCode { get; set; }
     }

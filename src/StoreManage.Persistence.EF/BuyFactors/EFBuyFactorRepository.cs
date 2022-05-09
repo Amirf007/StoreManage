@@ -27,6 +27,21 @@ namespace StoreManage.Persistence.EF.BuyFactors
             _dataContext.BuyFactors.Remove(buyfactor);
         }
 
+        public IList<GetBuyFactorDto> GetAll()
+        {
+            return _dataContext.BuyFactors
+                 .Select(_ => new GetBuyFactorDto
+                 {
+
+                     CommodityCode = _.CommodityCode,
+                     Date = _.Date,
+                     Count = _.Count,
+                     BuyPrice = _.BuyPrice,
+                     SellerName = _.SellerName,
+
+                 }).ToList();
+        }
+
         public BuyFactor GetbyFactorNumber(int buyFactorNumber)
         {
             return _dataContext.BuyFactors.Find(buyFactorNumber);

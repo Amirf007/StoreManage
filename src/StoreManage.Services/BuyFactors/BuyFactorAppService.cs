@@ -58,6 +58,11 @@ namespace StoreManage.Services.BuyFactors
             _unitOfWork.Commit();
         }
 
+        public IList<GetBuyFactorDto> GetAll()
+        {
+            return _repository.GetAll();
+        }
+
         public void Update(int buyFactorNumber, UpdateBuyFactorDto dto)
         {
             var buyfactor = _repository.GetbyFactorNumber(buyFactorNumber);

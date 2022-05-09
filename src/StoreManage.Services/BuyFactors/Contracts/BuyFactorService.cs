@@ -12,5 +12,6 @@ namespace StoreManage.Services.BuyFactors.Contracts
         void Add(AddBuyFactorDto dto);
         void Update(int buyFactorNumber, UpdateBuyFactorDto dto);
         void Delete(int buyFactorNumber);
+        IList<GetBuyFactorDto> GetAll();
     }
 }

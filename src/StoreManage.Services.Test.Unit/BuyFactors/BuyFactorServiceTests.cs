@@ -196,5 +196,55 @@ namespace StoreManage.Services.Test.Unit.BuyFactors
             expected.Code.Should().Be(commodity.Code);
             expected.Inventory.Should().Be(10);
         }
+
+        [Fact]
+        public void GetAll_return_all_BuyFactors_properly()
+        {
+            var category = CategoryFactory.CreateCategory();
+            _dataContext.Manipulate(_ => _.Categories.Add(category));
+
+            var commodity = CommodityFactory.CreateCommodity(category.Id);
+            _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
+
+            var buyFactor = BuyFactorFactory.GenerateBuyFactor(commodity.Code);
+            _dataContext.Manipulate(_ => _.BuyFactors.Add(buyFactor));
+
+            var secondbuyFactor = BuyFactorFactory.GenerateBuyFactor(commodity.Code);
+            secondbuyFactor.Count = 1;
+            secondbuyFactor.BuyPrice = "130000";
+            _dataContext.Manipulate(_ => _.BuyFactors.Add(secondbuyFactor));
+
+            commodity.Inventory += buyFactor.Count + secondbuyFactor.Count;
+
+            var expected = _sut.GetAll();
+
+            _dataContext.BuyFactors.Should().HaveCount(2);
+            _dataContext.BuyFactors.Should().Contain(_ => _.CommodityCode==commodity.Code && _.Count==buyFactor.Count && _.Date==buyFactor.Date && _.BuyPrice==buyFactor.BuyPrice && _.SellerName==buyFactor.SellerName);
+            _dataContext.BuyFactors.Should().Contain(_ => _.CommodityCode == commodity.Code && _.Count == secondbuyFactor.Count && _.Date == secondbuyFactor.Date && _.BuyPrice == secondbuyFactor.BuyPrice && _.SellerName == secondbuyFactor.SellerName);
+        }
+
+        [Fact]
+        public void GetAll_return_all_commoditiese_have_been_imported_with_inventory_properly()
+        {
+            var category = CategoryFactory.CreateCategory();
+            _dataContext.Manipulate(_ => _.Categories.Add(category));
+
+            var commodity = CommodityFactory.CreateCommodity(category.Id);
+            _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
+
+            var buyFactor = BuyFactorFactory.GenerateBuyFactor(commodity.Code);
+            _dataContext.Manipulate(_ => _.BuyFactors.Add(buyFactor));
+
+            var secondbuyFactor = BuyFactorFactory.GenerateBuyFactor(commodity.Code);
+            secondbuyFactor.Count = 1;
+            secondbuyFactor.BuyPrice = "130000";
+            _dataContext.Manipulate(_ => _.BuyFactors.Add(secondbuyFactor));
+
+            commodity.Inventory += buyFactor.Count + secondbuyFactor.Count;
+
+            var expected = _sut.GetAll();
+
+            _dataContext.Commodities.Should().Contain(_ => _.Name == "شیر رامک" && _.Code == 1 && _.Inventory == 15 && _.CategoryId == category.Id);
+        }
     }
 }
