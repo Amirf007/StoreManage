@@ -63,6 +63,17 @@ namespace StoreManage.Services.BuyFactors
             return _repository.GetAll();
         }
 
+        public GetBuyFactorDto GetBuyFactor(int buyFactorNumber)
+        {
+            var buyfactor = _repository.GetBuyFactor(buyFactorNumber);
+            if (buyfactor == null)
+            {
+                throw new BuyFactorNotFoundException();
+            }
+
+            return buyfactor;
+        }
+
         public void Update(int buyFactorNumber, UpdateBuyFactorDto dto)
         {
             var buyfactor = _repository.GetbyFactorNumber(buyFactorNumber);

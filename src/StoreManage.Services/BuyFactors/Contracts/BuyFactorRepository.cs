@@ -14,5 +14,6 @@ namespace StoreManage.Services.BuyFactors.Contracts
         BuyFactor GetbyFactorNumber(int buyFactorNumber);
         void Delete(BuyFactor buyfactor);
         IList<GetBuyFactorDto> GetAll();
+        GetBuyFactorDto GetBuyFactor(int buyFactorNumber);
     }
 }

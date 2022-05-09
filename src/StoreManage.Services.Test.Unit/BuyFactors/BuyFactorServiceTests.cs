@@ -246,5 +246,55 @@ namespace StoreManage.Services.Test.Unit.BuyFactors
 
             _dataContext.Commodities.Should().Contain(_ => _.Name == "شیر رامک" && _.Code == 1 && _.Inventory == 15 && _.CategoryId == category.Id);
         }
+
+        [Fact]
+        public void GetBuyFactor_return_commodity_have_been_imported_with_inventory_properly()
+        {
+            var category = CategoryFactory.CreateCategory();
+            _dataContext.Manipulate(_ => _.Categories.Add(category));
+
+            var commodity = CommodityFactory.CreateCommodity(category.Id);
+            _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
+
+            var buyFactor = BuyFactorFactory.GenerateBuyFactor(commodity.Code);
+            _dataContext.Manipulate(_ => _.BuyFactors.Add(buyFactor));
+
+            commodity.Inventory += buyFactor.Count;
+
+            var expected = _sut.GetBuyFactor(buyFactor.BuyFactorNumber);
+
+            _dataContext.Commodities.Should().Contain(_ => _.Name == "شیر رامک" && _.Code == 1 && _.Inventory == 14 && _.CategoryId == category.Id);
+        }
+
+        [Fact]
+        public void GetBuyFactor_return_buyfactor_with_Its_factornumber_properly()
+        {
+            var category = CategoryFactory.CreateCategory();
+            _dataContext.Manipulate(_ => _.Categories.Add(category));
+
+            var commodity = CommodityFactory.CreateCommodity(category.Id);
+            _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
+
+            var buyFactor = BuyFactorFactory.GenerateBuyFactor(commodity.Code);
+            _dataContext.Manipulate(_ => _.BuyFactors.Add(buyFactor));
+            commodity.Inventory += buyFactor.Count;
+
+            var expected = _sut.GetBuyFactor(buyFactor.BuyFactorNumber);
+
+            expected.CommodityCode.Should().Be(commodity.Code);
+            expected.Date.Should().Be(buyFactor.Date);
+            expected.Count.Should().Be(buyFactor.Count);
+            expected.BuyPrice.Should().Be(buyFactor.BuyPrice);
+            expected.SellerName.Should().Be(buyFactor.SellerName);
+        }
+
+        [Fact]
+        public void GetBuyFactor_throw_BuyFactorNotFoundException_when_buyfactor_that_you_want_return_given_id_that_not_exist()
+        {
+            var fakebuyfactornumber = 7;
+
+            Action Expected = () => _sut.GetBuyFactor(fakebuyfactornumber);
+            Expected.Should().ThrowExactly<BuyFactorNotFoundException>();
+        }
     }
 }

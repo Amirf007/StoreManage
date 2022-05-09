@@ -20,10 +20,10 @@ namespace StoreManage.RestAPI.Controllers
             _service.Add(dto);
         }
 
-        [HttpGet("{id}")]
-        public GetCommodityDto GetCommodity(int id)
+        [HttpGet("{code}")]
+        public GetCommodityDto GetCommodity(int code)
         {
-            return _service.GetCommodity(id);
+            return _service.GetCommodity(code);
         }
 
         [HttpGet]
@@ -32,16 +32,16 @@ namespace StoreManage.RestAPI.Controllers
             return _service.GetAll();
         }
 
-        [HttpPut("{id}")]
-        public void Update(int id, UpdateCommodityDto dto)
+        [HttpPut("{code}")]
+        public void Update(int code, UpdateCommodityDto dto)
         {
-            _service.Update(id, dto);
+            _service.Update(code, dto);
         }
 
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("{code}")]
+        public void Delete(int code)
         {
-            _service.Delete(id);
+            _service.Delete(code);
         }
     }
 }

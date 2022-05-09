@@ -22,24 +22,24 @@ using static StoreManage.Specs.BDDHelper;
 
 namespace StoreManage.Specs.EntryCommodity
 {
-    [Scenario("ویرایش ورود کالا")]
+    [Scenario("مشاهده ورود کالا")]
     [Feature("",
         AsA = "فروشنده ",
         IWantTo = " ورود کالاها را مدیریت کنم ",
         InOrderTo = "برای هر بار خرید  یک فاکتور خرید داشته باشم و موجودی کالا ها ی خود را افزایش دهم"
     )]
-    public class UpdateEntryCommodity : EFDataContextDatabaseFixture
+    public class GetEntryCommodity : EFDataContextDatabaseFixture
     {
         private readonly EFDataContext _dataContext;
         private readonly BuyFactorService _sut;
         private readonly BuyFactorRepository _buyfactorrepository;
         private readonly CommodityRepository _commodityRepository;
         private readonly UnitOfWork _unitOfWork;
-        private UpdateBuyFactorDto _dto;
         private Category _category;
         private Commodity _commodity;
         private BuyFactor _buyFactor;
-        public UpdateEntryCommodity(ConfigurationFixture configuration) : base(configuration)
+        private GetBuyFactorDto expected;
+        public GetEntryCommodity(ConfigurationFixture configuration) : base(configuration)
         {
             _dataContext = CreateDataContext();
             _unitOfWork = new EFUnitOfWork(_dataContext);
@@ -73,22 +73,27 @@ namespace StoreManage.Specs.EntryCommodity
             _commodity.Inventory += _buyFactor.Count;
         }
 
-        [When(" قیمت خرید' و 'تعداد' ورودی های کالا با نام 'شیر رامک' و کد '1' در فاکتور خرید در تاریخ '2022/05/08' را ب '130000' و '3' عدد تغییر میدهم' ")]
+        [When("درخواست نمایش ورود کالا را میدهم")]
         public void When()
         {
-            _dto = UpdateBuyFactorDtoFactory.GenerateUpdateBuyFactorDto(_commodity.Code);
-
-            _sut.Update(_buyFactor.BuyFactorNumber, _dto);
+            expected = _sut.GetBuyFactor(_buyFactor.BuyFactorNumber);
         }
 
-        [Then("کالایی با نام 'شیر رامک' و کد '1' و موجودی '13' عدد در  دسته بندی کالا با عنوان 'لبنیات' باید وجود داشته باشد")]
+        [Then("فاکتور خریدی برای خرید کالایی با کد '1' و نام 'شیر رامک' به تعداد '4' در تاریخ '2022/05/08' و ب قیمت  '125000' در فهرست فاکتور های خرید باید وجود داشته باشد")]
         public void Then()
         {
-            var expected = _dataContext.Commodities.FirstOrDefault();
+         
+            expected.CommodityCode.Should().Be(_commodity.Code);
+            expected.Date.Should().Be(_buyFactor.Date);
+            expected.Count.Should().Be(_buyFactor.Count);
+            expected.BuyPrice.Should().Be(_buyFactor.BuyPrice);
+            expected.SellerName.Should().Be(_buyFactor.SellerName);
+        }
 
-            expected.Name.Should().Be(_commodity.Name);
-            expected.Code.Should().Be(_commodity.Code);
-            expected.Inventory.Should().Be(13);
+        [Then("کالایی با نام 'شیر رامک' و کد '1' و موجودی '14' عدد در  دسته بندی کالا با عنوان 'لبنیات' باید وجود داشته باشد")]
+        public void ThenAnd()
+        {
+            _dataContext.Commodities.Should().Contain(_ => _.Name == "شیر رامک" && _.Code == 1 && _.Inventory == 14 && _.CategoryId == _category.Id);
         }
 
         [Fact]
@@ -99,6 +104,7 @@ namespace StoreManage.Specs.EntryCommodity
             GivensecondAnd();
             When();
             Then();
+            ThenAnd();
         }
     }
 }

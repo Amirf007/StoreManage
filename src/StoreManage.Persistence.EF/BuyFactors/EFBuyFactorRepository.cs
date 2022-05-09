@@ -42,6 +42,19 @@ namespace StoreManage.Persistence.EF.BuyFactors
                  }).ToList();
         }
 
+        public GetBuyFactorDto GetBuyFactor(int buyFactorNumber)
+        {
+            return _dataContext.BuyFactors.Where(_ => _.BuyFactorNumber == buyFactorNumber).Select(_ => new GetBuyFactorDto
+            {
+                CommodityCode = _.CommodityCode,
+                Date = _.Date,
+                Count = _.Count,
+                BuyPrice = _.BuyPrice,
+                SellerName = _.SellerName,
+
+            }).SingleOrDefault();
+        }
+
         public BuyFactor GetbyFactorNumber(int buyFactorNumber)
         {
             return _dataContext.BuyFactors.Find(buyFactorNumber);

@@ -79,14 +79,22 @@ namespace StoreManage.Specs.EntryCommodity
             _commodity.Inventory += _buyFactor.Count + _secondbuyFactor.Count;
         }
 
-        [When("درخواست نمایش فهرست کالا های ورودی را میدهم")]
+        [When("درخواست نمایش فهرست ورودی های کالا را میدهم")]
         public void When()
         {
             expected = _sut.GetAll();
         }
 
-        [Then("کالایی با نام 'شیر رامک' و کد '1' و موجودی '15' عدد در  دسته بندی کالا با عنوان 'لبنیات' باید وجود داشته باشد")]
+        [Then("فاکتور های خریدی برای خرید کالایی با کد 1 و نام شیر رامک به تعداد های 4 و 1 در تاریخ 2022/05/08 و ب قیمت های 125000 و 130000 در فهرست فاکتور های خرید باید وجود داشته باشد ")]
         public void Then()
+        {
+            _dataContext.BuyFactors.Should().HaveCount(2);
+            _dataContext.BuyFactors.Should().Contain(_ => _.CommodityCode == _commodity.Code && _.Count == _buyFactor.Count && _.Date == _buyFactor.Date && _.BuyPrice == _buyFactor.BuyPrice && _.SellerName == _buyFactor.SellerName);
+            _dataContext.BuyFactors.Should().Contain(_ => _.CommodityCode == _commodity.Code && _.Count == _secondbuyFactor.Count && _.Date == _secondbuyFactor.Date && _.BuyPrice == _secondbuyFactor.BuyPrice && _.SellerName == _secondbuyFactor.SellerName);
+        }
+
+        [Then("کالایی با نام 'شیر رامک' و کد '1' و موجودی '15' عدد در  دسته بندی کالا با عنوان 'لبنیات' باید وجود داشته باشد")]
+        public void ThenAnd()
         { 
             _dataContext.Commodities.Should().Contain(_ => _.Name == "شیر رامک" && _.Code == 1 && _.Inventory == 15 && _.CategoryId == _category.Id);
         }
@@ -99,6 +107,7 @@ namespace StoreManage.Specs.EntryCommodity
             GivensecondAnd();
             When();
             Then();
+            ThenAnd();
         }
     }
 }
