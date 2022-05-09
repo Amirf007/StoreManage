@@ -41,5 +41,21 @@ namespace StoreManage.Services.BuyFactors
 
             _unitOfWork.Commit();
         }
+
+        public void Update(int buyFactorNumber, UpdateBuyFactorDto dto)
+        {
+            var buyfactor = _repository.GetbyFactorNumber(buyFactorNumber);
+
+            buyfactor.CommodityCode = dto.CommodityCode;
+            buyfactor.Date = dto.Date;
+            buyfactor.Count = dto.Count;
+            buyfactor.BuyPrice = dto.BuyPrice;
+            buyfactor.SellerName = dto.SellerName;
+
+            var commodity = _commodityRepository.GetbyId(buyfactor.CommodityCode);
+            commodity.Inventory += buyfactor.Count;
+
+            _unitOfWork.Commit();
+        }
     }
 }

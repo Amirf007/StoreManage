@@ -11,5 +11,6 @@ namespace StoreManage.Services.BuyFactors.Contracts
     public interface BuyFactorRepository : Repository
     {
         void Add(BuyFactor buyfactor);
+        BuyFactor GetbyFactorNumber(int buyFactorNumber);
     }
 }
