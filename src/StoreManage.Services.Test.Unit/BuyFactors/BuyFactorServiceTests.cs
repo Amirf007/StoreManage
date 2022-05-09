@@ -248,7 +248,7 @@ namespace StoreManage.Services.Test.Unit.BuyFactors
         }
 
         [Fact]
-        public void GetBuyFactor_return_commodity_have_been_imported_with_inventory_properly()
+        public void GetBuyFactor_check_exist_commodity_have_been_imported_with_inventory_properly()
         {
             var category = CategoryFactory.CreateCategory();
             _dataContext.Manipulate(_ => _.Categories.Add(category));
