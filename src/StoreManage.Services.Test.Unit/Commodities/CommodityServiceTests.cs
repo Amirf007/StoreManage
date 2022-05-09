@@ -9,6 +9,7 @@ using StoreManage.Persistence.EF.Commodities;
 using StoreManage.Services.Categories.Contracts;
 using StoreManage.Services.Commodities;
 using StoreManage.Services.Commodities.Contracts;
+using StoreManage.Test.Tools.BuyFactors;
 using StoreManage.Test.Tools.Categories;
 using StoreManage.Test.Tools.Commodities;
 using System;
@@ -58,24 +59,6 @@ namespace StoreManage.Services.Test.Unit.Commodities
             expected.MaxInventory.Should().Be(dto.MaxInventory);
             expected.MinInventory.Should().Be(dto.MinInventory);
             expected.Category.Id.Should().Be(category.Id);
-        }
-
-        [Fact]
-        public void Add_throws_DuplicateCommodityNameInCategoryException_when_commodity_register_with_duplicate_Name()
-        {
-            var category = CategoryFactory.CreateCategory();
-            _dataContext.Manipulate(_ => _.Categories.Add(category));
-
-            var commodity = CommodityFactory.CreateCommodity(category.Id);
-            _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
-
-            var dto = AddCommodityDtoFactory.GenerateAddCommodityDto(category.Id);
-            dto.Name = commodity.Name;
-            dto.Price = "200000";
-
-            Action expected = () => _sut.Add(dto);
-
-            expected.Should().ThrowExactly<DuplicateCommodityNameInCategoryException>();
         }
 
         [Fact]

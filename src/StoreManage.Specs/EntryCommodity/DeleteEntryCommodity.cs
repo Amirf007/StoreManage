@@ -22,24 +22,23 @@ using static StoreManage.Specs.BDDHelper;
 
 namespace StoreManage.Specs.EntryCommodity
 {
-    [Scenario("ویرایش ورود کالا")]
+    [Scenario("حذف ورود کالا")]
     [Feature("",
         AsA = "فروشنده ",
         IWantTo = " ورود کالاها را مدیریت کنم ",
         InOrderTo = "برای هر بار خرید  یک فاکتور خرید داشته باشم و موجودی کالا ها ی خود را افزایش دهم"
     )]
-    public class UpdateEntryCommodity : EFDataContextDatabaseFixture
+    public class DeleteEntryCommodity : EFDataContextDatabaseFixture
     {
         private readonly EFDataContext _dataContext;
         private readonly BuyFactorService _sut;
         private readonly BuyFactorRepository _buyfactorrepository;
         private readonly CommodityRepository _commodityRepository;
         private readonly UnitOfWork _unitOfWork;
-        private UpdateBuyFactorDto _dto;
         private Category _category;
         private Commodity _commodity;
         private BuyFactor _buyFactor;
-        public UpdateEntryCommodity(ConfigurationFixture configuration) : base(configuration)
+        public DeleteEntryCommodity(ConfigurationFixture configuration) : base(configuration)
         {
             _dataContext = CreateDataContext();
             _unitOfWork = new EFUnitOfWork(_dataContext);
@@ -73,22 +72,20 @@ namespace StoreManage.Specs.EntryCommodity
             _commodity.Inventory += _buyFactor.Count;
         }
 
-        [When(" قیمت خرید' و 'تعداد' ورودی های کالا با نام 'شیر رامک' و کد '1' در فاکتور خرید در تاریخ '2022/05/08' را ب '130000' و '3' عدد تغییر میدهم' ")]
+        [When("تعداد 4 عدد از کالایی با نام شیر رامک و کد 1 ک در تاریخ 2022/05/08 وارد شده است را مرجوع میکنم")]
         public void When()
         {
-            _dto = UpdateBuyFactorDtoFactory.GenerateUpdateBuyFactorDto(_commodity.Code);
-
-            _sut.Update(_buyFactor.BuyFactorNumber, _dto);
+            _sut.Delete(_buyFactor.BuyFactorNumber);
         }
 
-        [Then("کالایی با نام 'شیر رامک' و کد '1' و موجودی '13' عدد در  دسته بندی کالا با عنوان 'لبنیات' باید وجود داشته باشد")]
+        [Then("هیچ تعداد کالایی با نام شیر رامک و کد 1 در تاریخ 2022/05/08 نباید وارد شده باشد")]
         public void Then()
         {
             var expected = _dataContext.Commodities.FirstOrDefault();
 
             expected.Name.Should().Be(_commodity.Name);
             expected.Code.Should().Be(_commodity.Code);
-            expected.Inventory.Should().Be(13);
+            expected.Inventory.Should().Be(10);
         }
 
         [Fact]

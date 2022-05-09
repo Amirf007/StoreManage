@@ -42,18 +42,38 @@ namespace StoreManage.Services.BuyFactors
             _unitOfWork.Commit();
         }
 
+        public void Delete(int buyFactorNumber)
+        {
+            var buyfactor = _repository.GetbyFactorNumber(buyFactorNumber);
+            if (buyfactor == null)
+            {
+                throw new BuyFactorNotFoundException();
+            }
+
+            _repository.Delete(buyfactor);
+
+            var commodity = _commodityRepository.GetbyId(buyfactor.CommodityCode);
+            commodity.Inventory -= buyfactor.Count;
+
+            _unitOfWork.Commit();
+        }
+
         public void Update(int buyFactorNumber, UpdateBuyFactorDto dto)
         {
             var buyfactor = _repository.GetbyFactorNumber(buyFactorNumber);
+            if (buyfactor == null)
+            {
+                throw new BuyFactorNotFoundException();
+            }
+
+            var commodity = _commodityRepository.GetbyId(buyfactor.CommodityCode);
+            commodity.Inventory += (dto.Count - buyfactor.Count);
 
             buyfactor.CommodityCode = dto.CommodityCode;
             buyfactor.Date = dto.Date;
             buyfactor.Count = dto.Count;
             buyfactor.BuyPrice = dto.BuyPrice;
             buyfactor.SellerName = dto.SellerName;
-
-            var commodity = _commodityRepository.GetbyId(buyfactor.CommodityCode);
-            commodity.Inventory += buyfactor.Count;
 
             _unitOfWork.Commit();
         }
