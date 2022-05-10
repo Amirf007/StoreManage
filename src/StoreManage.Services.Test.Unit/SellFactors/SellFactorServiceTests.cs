@@ -202,5 +202,31 @@ namespace StoreManage.Services.Test.Unit.SellFactors
             expected.Code.Should().Be(commodity.Code);
             expected.Inventory.Should().Be(initialbalance);
         }
+
+        [Fact]
+        public void GetAll_return_all_sellfactors_properly()
+        {
+            var category = CategoryFactory.CreateCategory();
+            _dataContext.Manipulate(_ => _.Categories.Add(category));
+
+            var commodity = CommodityFactory.CreateCommodity(category.Id);
+            _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
+
+            var sellfactor = SellFactorFactory.GenerateSellFactor(commodity.Code);
+            _dataContext.Manipulate(_ => _.SellFactors.Add(sellfactor));
+
+            var secondsellFactor = SellFactorFactory.GenerateSellFactor(commodity.Code);
+            secondsellFactor.Count = 1;
+            secondsellFactor.TotalPrice = "150000";
+            _dataContext.Manipulate(_ => _.SellFactors.Add(secondsellFactor));
+
+            commodity.Inventory -= sellfactor.Count + secondsellFactor.Count;
+
+            var expected = _sut.GetAll();
+
+            expected.Should().HaveCount(2);
+            expected.Should().Contain(_ => _.CommodityCode == commodity.Code && _.Count == sellfactor.Count && _.Date == sellfactor.Date && _.BasePrice == sellfactor.BasePrice && _.TotalPrice == sellfactor.TotalPrice && _.BuyerName == sellfactor.BuyerName);
+            expected.Should().Contain(_ => _.CommodityCode == commodity.Code && _.Count == secondsellFactor.Count && _.Date == secondsellFactor.Date && _.BasePrice == secondsellFactor.BasePrice && _.TotalPrice == secondsellFactor.TotalPrice && _.BuyerName == secondsellFactor.BuyerName);
+        }
     }
 }

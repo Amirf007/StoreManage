@@ -22,6 +22,22 @@ namespace StoreManage.Persistence.EF.SellFactors
             _dataContext.SellFactors.Add(sellfactor);
         }
 
+        public IList<GetSellFactorDto> GetAll()
+        {
+            return _dataContext.SellFactors
+                 .Select(_ => new GetSellFactorDto
+                 {
+
+                     CommodityCode = _.CommodityCode,
+                     Date = _.Date,
+                     Count = _.Count,
+                     BasePrice = _.BasePrice,
+                     TotalPrice = _.TotalPrice,
+                     BuyerName = _.BuyerName,
+
+                 }).ToList();
+        }
+
         public SellFactor GetBySellFactorNumber(int sellFactorNumber)
         {
             return _dataContext.SellFactors.Find(sellFactorNumber);

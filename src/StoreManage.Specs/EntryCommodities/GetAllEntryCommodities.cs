@@ -65,7 +65,7 @@ namespace StoreManage.Specs.EntryCommodity
             _dataContext.Manipulate(_ => _.Commodities.Add(_commodity));
         }
 
-        [Given(" کالایی با نام 'شیر رامک' به تعداد '4' عدد و در تاریخ '2022/05/08' با قیمت '125000' و همچنین کالایی با نام شیر رامک و کد 1 به تعداد 1 عدد در تاریخ 2022/05/08 در فهرست کالا های ورودی وجود دارند")]
+        [Given(" سند های ورود کالایی با کد '1' و تعداد '4' و '1' عدد و قیمت خرید '12500' و '130000' در تاریخ '2022/05/08' در فهرست سند های ورود کالا وجود دارند")]
         public void GivensecondAnd()
         {
             _buyFactor = BuyFactorFactory.GenerateBuyFactor(_commodity.Code);
@@ -85,18 +85,12 @@ namespace StoreManage.Specs.EntryCommodity
             expected = _sut.GetAll();
         }
 
-        [Then("فاکتور های خریدی برای خرید کالایی با کد 1 و نام شیر رامک به تعداد های 4 و 1 در تاریخ 2022/05/08 و ب قیمت های 125000 و 130000 در فهرست فاکتور های خرید باید وجود داشته باشد ")]
+        [Then("سند های ورود کالایی با کد '1'و تعداد های '4' و '1' در تاریخ '2022/05/08' و ب قیمت های خرید '125000' و '130000' در فهرست سند های ورود کالا باید وجود داشته باشند ")]
         public void Then()
         {
             _dataContext.BuyFactors.Should().HaveCount(2);
             _dataContext.BuyFactors.Should().Contain(_ => _.CommodityCode == _commodity.Code && _.Count == _buyFactor.Count && _.Date == _buyFactor.Date && _.BuyPrice == _buyFactor.BuyPrice && _.SellerName == _buyFactor.SellerName);
             _dataContext.BuyFactors.Should().Contain(_ => _.CommodityCode == _commodity.Code && _.Count == _secondbuyFactor.Count && _.Date == _secondbuyFactor.Date && _.BuyPrice == _secondbuyFactor.BuyPrice && _.SellerName == _secondbuyFactor.SellerName);
-        }
-
-        [Then("کالایی با نام 'شیر رامک' و کد '1' و موجودی '15' عدد در  دسته بندی کالا با عنوان 'لبنیات' باید وجود داشته باشد")]
-        public void ThenAnd()
-        { 
-            _dataContext.Commodities.Should().Contain(_ => _.Name == "شیر رامک" && _.Code == 1 && _.Inventory == 15 && _.CategoryId == _category.Id);
         }
 
         [Fact]
@@ -107,7 +101,6 @@ namespace StoreManage.Specs.EntryCommodity
             GivensecondAnd();
             When();
             Then();
-            ThenAnd();
         }
     }
 }

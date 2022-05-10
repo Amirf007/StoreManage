@@ -59,6 +59,11 @@ namespace StoreManage.Services.SellFactors
             _unitOfWork.Commit();
         }
 
+        public IList<GetSellFactorDto> GetAll()
+        {
+            return _repository.GetAll();
+        }
+
         public void Update(int sellFactorNumber, UpdateSellFactorDto dto)
         {
             SellFactor sellfactor = _repository.GetBySellFactorNumber(sellFactorNumber);
