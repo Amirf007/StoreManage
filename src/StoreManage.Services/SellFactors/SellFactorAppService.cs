@@ -43,6 +43,22 @@ namespace StoreManage.Services.SellFactors
             _unitOfWork.Commit();
         }
 
+        public void Delete(int sellFactorNumber)
+        {
+            var sellfactor = _repository.GetBySellFactorNumber(sellFactorNumber);
+            if (sellfactor == null)
+            {
+                throw new SellFactorNotFoundException();
+            }
+
+            _repository.Remove(sellfactor);
+
+            var commodity = _commodityRepository.GetbyId(sellfactor.CommodityCode);
+            commodity.Inventory += sellfactor.Count;
+
+            _unitOfWork.Commit();
+        }
+
         public void Update(int sellFactorNumber, UpdateSellFactorDto dto)
         {
             SellFactor sellfactor = _repository.GetBySellFactorNumber(sellFactorNumber);

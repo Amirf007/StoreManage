@@ -12,5 +12,6 @@ namespace StoreManage.Services.SellFactors.Contracts
     {
         void Add(SellFactor sellfactor);
         SellFactor GetBySellFactorNumber(int sellFactorNumber);
+        void Remove(SellFactor sellfactor);
     }
 }

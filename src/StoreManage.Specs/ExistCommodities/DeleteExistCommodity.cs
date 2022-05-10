@@ -3,15 +3,15 @@ using StoreManage.Entities;
 using StoreManage.Infrastructure.Application;
 using StoreManage.Infrastructure.Test;
 using StoreManage.Persistence.EF;
-using StoreManage.Persistence.EF.BuyFactors;
 using StoreManage.Persistence.EF.Commodities;
-using StoreManage.Services.BuyFactors;
-using StoreManage.Services.BuyFactors.Contracts;
+using StoreManage.Persistence.EF.SellFactors;
 using StoreManage.Services.Commodities.Contracts;
+using StoreManage.Services.SellFactors;
+using StoreManage.Services.SellFactors.Contracts;
 using StoreManage.Specs.Infrastructure;
-using StoreManage.Test.Tools.BuyFactors;
 using StoreManage.Test.Tools.Categories;
 using StoreManage.Test.Tools.Commodities;
+using StoreManage.Test.Tools.SellFactors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,32 +20,32 @@ using System.Threading.Tasks;
 using Xunit;
 using static StoreManage.Specs.BDDHelper;
 
-namespace StoreManage.Specs.EntryCommodity
+namespace StoreManage.Specs.ExistCommodities
 {
-    [Scenario("تعریف ورود کالا ")]
+    [Scenario("حذف خروج کالا ")]
     [Feature("",
-        AsA = "فروشنده ",
-        IWantTo = " ورود کالاها را مدیریت کنم ",
-        InOrderTo = "برای هر بار خرید  یک فاکتور خرید داشته باشم و موجودی کالا ها ی خود را افزایش دهم"
-    )]
-    public class AddEntryCommodity : EFDataContextDatabaseFixture
+      AsA = "فروشنده ",
+      IWantTo = " خروج کالاها را مدیریت کنم ",
+      InOrderTo = "برای هر فروش کالا یک فاکتور فروش داشته باشم و کالا های خود را بفروشم"
+  )]
+    public class DeleteExistCommodity : EFDataContextDatabaseFixture
     {
         private readonly EFDataContext _dataContext;
-        private readonly BuyFactorService _sut;
-        private readonly BuyFactorRepository _buyfactorrepository;
+        private readonly SellFactorService _sut;
+        private readonly SellFactorRepository _sellfactorrepository;
         private readonly CommodityRepository _commodityRepository;
         private readonly UnitOfWork _unitOfWork;
-        private AddBuyFactorDto _dto;
+        private SellFactor _sellFactor;
         private Category _category;
         private Commodity _commodity;
         private int _initialbalance;
-        public AddEntryCommodity(ConfigurationFixture configuration) : base(configuration)
+        public DeleteExistCommodity(ConfigurationFixture configuration) : base(configuration)
         {
             _dataContext = CreateDataContext();
             _unitOfWork = new EFUnitOfWork(_dataContext);
-            _buyfactorrepository = new EFBuyFactorRepository(_dataContext);
+            _sellfactorrepository = new EFSellFactorRepository(_dataContext);
             _commodityRepository = new EFCommodityRepository(_dataContext);
-            _sut = new BuyFactorAppService(_buyfactorrepository, _unitOfWork , _commodityRepository);
+            _sut = new SellFactorAppService(_sellfactorrepository, _unitOfWork, _commodityRepository);
         }
 
         [Given("دسته بندی با عنوان 'لبنیات' در فهرست دسته بندی کالاها وجود دارد")]
@@ -65,39 +65,35 @@ namespace StoreManage.Specs.EntryCommodity
             _initialbalance = _commodity.Inventory;
         }
 
-        [Given("هیچ سند ورود کالایی در فهرست سند ورودی کالا وجود ندارد")]
-        public void GivenAnd2()
+        [Given("سند خروج کالایی با کد '1' به تعداد '3' عدد در تاریخ '2022/05/08' با قیمت پایه '150000' و قیمت کل 450000 در فهرست سند خروجی کالا وجود دارد")]
+        public void GivensecondAnd()
         {
-            
+            _sellFactor = SellFactorFactory.GenerateSellFactor(_commodity.Code);
+            _dataContext.Manipulate(_ => _.SellFactors.Add(_sellFactor));
+
+            _commodity.Inventory -= _sellFactor.Count;
         }
 
-        [When("کالایی با کد '1' با تعداد '4' و قیمت خرید '125000' در تاریخ '19 / 02 / 1400'  وارد میکنم")]
+        [When("سند خروج کالایی با کد '1' به تعداد '3' عدد در تاریخ '2022/05/08' با قیمت پایه '150000' و قیمت کل '450000' را حذف میکنم")]
         public void When()
         {
-            _dto = AddBuyFactorDtoFactory.GenerateAddBuyFactorDto(_commodity.Code);
-
-            _sut.Add(_dto);
+            _sut.Delete(_sellFactor.SellFactorNumber);
         }
 
-        [Then("سند ورود کالایی با کد '1' با تعداد '4' در تاریخ '21 / 02 / 1400' در فهرست سند ورودی کالا باید وجود داشته باشد")]
+        [Then("هیچ سند خروج کالایی در فهرست سند خروج کالا نباید وجود داشته باشد")]
         public void Then()
         {
-            var expected = _dataContext.BuyFactors.FirstOrDefault();
-            expected.CommodityCode.Should().Be(_commodity.Code);
-            expected.Date.Should().Be(_dto.Date);
-            expected.BuyPrice.Should().Be(_dto.BuyPrice);
-            expected.Count.Should().Be(_dto.Count);
-            expected.SellerName.Should().Be(_dto.SellerName);
+            _dataContext.SellFactors.Should().HaveCount(0);
         }
 
-        [Then("کالایی با نام 'شیر رامک' و کد '1' و موجودی '14' عدد در  دسته بندی کالا با عنوان 'لبنیات' باید وجود داشته باشد")]
+        [Then("کالایی با نام 'شیر رامک' و کد '1' و موجودی '10' عدد در  دسته بندی کالا با عنوان 'لبنیات' باید وجود داشته باشد")]
         public void ThenAnd()
         {
             var expected = _dataContext.Commodities.FirstOrDefault();
 
             expected.Name.Should().Be(_commodity.Name);
-            expected.Code.Should().Be(_dto.CommodityCode);
-            expected.Inventory.Should().Be(_initialbalance + _dto.Count);
+            expected.Code.Should().Be(_commodity.Code);
+            expected.Inventory.Should().Be(_initialbalance);
         }
 
         [Fact]
@@ -105,7 +101,7 @@ namespace StoreManage.Specs.EntryCommodity
         {
             Given();
             GivenAnd();
-            GivenAnd2();
+            GivensecondAnd();
             When();
             Then();
             ThenAnd();

@@ -63,7 +63,7 @@ namespace StoreManage.Specs.EntryCommodity
             _dataContext.Manipulate(_ => _.Commodities.Add(_commodity));
         }
 
-        [Given("کالایی با نام 'شیر رامک' به تعداد '4' عدد و در تاریخ '2022/05/08' با قیمت '125000' در فهرست کالا های ورودی وجود دارد")]
+        [Given("سند ورود کالایی با کد '1' به تعداد '4' عدد در تاریخ '2022/05/08' با قیمت خرید '125000' در فهرست سند ورود کالا وجود دارد")]
         public void GivenAnd2()
         {
             _buyFactor = BuyFactorFactory.GenerateBuyFactor(_commodity.Code);
@@ -72,14 +72,20 @@ namespace StoreManage.Specs.EntryCommodity
             _commodity.Inventory += _buyFactor.Count;
         }
 
-        [When("تعداد 4 عدد از کالایی با نام شیر رامک و کد 1 ک در تاریخ 2022/05/08 وارد شده است را مرجوع میکنم")]
+        [When("سند ورود کالایی با کد '1' به تعداد '4' عدد در تاریخ '2022/05/08' با قیمت خرید '125000' را حذف میکنم")]
         public void When()
         {
             _sut.Delete(_buyFactor.BuyFactorNumber);
         }
 
-        [Then("هیچ تعداد کالایی با نام شیر رامک و کد 1 در تاریخ 2022/05/08 نباید وارد شده باشد")]
+        [Then("هیچ سند خروج کالایی در فهرست سند خروج کالا نباید وجود داشته باشد")]
         public void Then()
+        {
+            _dataContext.BuyFactors.Should().HaveCount(0);
+        }
+
+        [Then("کالایی با نام 'شیر رامک' و کد '1' و موجودی '10' عدد در  دسته بندی کالا با عنوان 'لبنیات' باید وجود داشته باشد")]
+        public void ThenAnd()
         {
             var expected = _dataContext.Commodities.FirstOrDefault();
 
@@ -96,6 +102,7 @@ namespace StoreManage.Specs.EntryCommodity
             GivenAnd2();
             When();
             Then();
+            ThenAnd();
         }
     }
 }

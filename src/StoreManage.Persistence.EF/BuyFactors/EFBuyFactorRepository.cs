@@ -22,7 +22,7 @@ namespace StoreManage.Persistence.EF.BuyFactors
             _dataContext.Add(buyfactor);
         }
 
-        public void Delete(BuyFactor buyfactor)
+        public void Remove(BuyFactor buyfactor)
         {
             _dataContext.BuyFactors.Remove(buyfactor);
         }

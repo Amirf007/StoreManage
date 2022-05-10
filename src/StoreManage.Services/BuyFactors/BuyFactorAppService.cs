@@ -50,7 +50,7 @@ namespace StoreManage.Services.BuyFactors
                 throw new BuyFactorNotFoundException();
             }
 
-            _repository.Delete(buyfactor);
+            _repository.Remove(buyfactor);
 
             var commodity = _commodityRepository.GetbyId(buyfactor.CommodityCode);
             commodity.Inventory -= buyfactor.Count;

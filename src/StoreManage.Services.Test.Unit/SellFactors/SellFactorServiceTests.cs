@@ -146,5 +146,61 @@ namespace StoreManage.Services.Test.Unit.SellFactors
             Action Expected = () => _sut.Update(fakesellfactornumber, dto);
             Expected.Should().ThrowExactly<SellFactorNotFoundException>();
         }
+
+        [Fact]
+        public void Delete_delete_sellfactor_properly()
+        {
+            var category = CategoryFactory.CreateCategory();
+            _dataContext.Manipulate(_ => _.Categories.Add(category));
+
+            var commodity = CommodityFactory.CreateCommodity(category.Id);
+            _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
+
+            var sellfactor = SellFactorFactory.GenerateSellFactor(commodity.Code);
+            _dataContext.Manipulate(_ => _.SellFactors.Add(sellfactor));
+            commodity.Inventory -= sellfactor.Count;
+
+            _sut.Delete(sellfactor.SellFactorNumber);
+
+            _dataContext.SellFactors.Should().HaveCount(0);
+        }
+
+        [Fact]
+        public void Delete_throw_SellFactorNotFoundException_when_sellfactor_with_given_sellfactornumber_that_not_exist()
+        {
+            var fakesellfactornumber = 20;
+
+            var category = CategoryFactory.CreateCategory();
+            _dataContext.Manipulate(_ => _.Categories.Add(category));
+
+            var commodity = CommodityFactory.CreateCommodity(category.Id);
+            _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
+
+            Action Expected = () => _sut.Delete(fakesellfactornumber);
+            Expected.Should().ThrowExactly<SellFactorNotFoundException>();
+        }
+
+        [Fact]
+        public void Delete_increase_inventory_of_commodity_was_canceled_exist_properly()
+        {
+            var category = CategoryFactory.CreateCategory();
+            _dataContext.Manipulate(_ => _.Categories.Add(category));
+
+            var commodity = CommodityFactory.CreateCommodity(category.Id);
+            _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
+            var initialbalance = commodity.Inventory;
+
+            var sellfactor = SellFactorFactory.GenerateSellFactor(commodity.Code);
+            _dataContext.Manipulate(_ => _.SellFactors.Add(sellfactor));
+            commodity.Inventory -= sellfactor.Count;
+
+            _sut.Delete(sellfactor.SellFactorNumber);
+
+            var expected = _dataContext.Commodities.FirstOrDefault();
+
+            expected.Name.Should().Be(commodity.Name);
+            expected.Code.Should().Be(commodity.Code);
+            expected.Inventory.Should().Be(initialbalance);
+        }
     }
 }

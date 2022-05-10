@@ -26,5 +26,10 @@ namespace StoreManage.Persistence.EF.SellFactors
         {
             return _dataContext.SellFactors.Find(sellFactorNumber);
         }
+
+        public void Remove(SellFactor sellfactor)
+        {
+            _dataContext.SellFactors.Remove(sellfactor);
+        }
     }
 }

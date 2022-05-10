@@ -22,6 +22,12 @@ using static StoreManage.Specs.BDDHelper;
 
 namespace StoreManage.Specs.ExistCommodities
 {
+    [Scenario("ویرایش خروج کالا ")]
+    [Feature("",
+      AsA = "فروشنده ",
+      IWantTo = " خروج کالاها را مدیریت کنم ",
+      InOrderTo = "برای هر فروش کالا یک فاکتور فروش داشته باشم و کالا های خود را بفروشم"
+  )]
     public class UpdateExistCommodity : EFDataContextDatabaseFixture
     {
         private readonly EFDataContext _dataContext;

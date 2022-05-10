@@ -11,5 +11,6 @@ namespace StoreManage.Services.SellFactors.Contracts
     {
         void Add(AddSellFactorDto dto);
         void Update(int sellFactorNumber, UpdateSellFactorDto dto);
+        void Delete(int sellFactorNumber);
     }
 }
