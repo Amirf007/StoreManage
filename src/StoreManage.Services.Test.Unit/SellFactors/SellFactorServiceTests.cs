@@ -228,5 +228,37 @@ namespace StoreManage.Services.Test.Unit.SellFactors
             expected.Should().Contain(_ => _.CommodityCode == commodity.Code && _.Count == sellfactor.Count && _.Date == sellfactor.Date && _.BasePrice == sellfactor.BasePrice && _.TotalPrice == sellfactor.TotalPrice && _.BuyerName == sellfactor.BuyerName);
             expected.Should().Contain(_ => _.CommodityCode == commodity.Code && _.Count == secondsellFactor.Count && _.Date == secondsellFactor.Date && _.BasePrice == secondsellFactor.BasePrice && _.TotalPrice == secondsellFactor.TotalPrice && _.BuyerName == secondsellFactor.BuyerName);
         }
+
+        [Fact]
+        public void GetSellFactor_return_sellfactor_with_Its_factornumber_properly()
+        {
+            var category = CategoryFactory.CreateCategory();
+            _dataContext.Manipulate(_ => _.Categories.Add(category));
+
+            var commodity = CommodityFactory.CreateCommodity(category.Id);
+            _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
+
+            var sellfactor = SellFactorFactory.GenerateSellFactor(commodity.Code);
+            _dataContext.Manipulate(_ => _.SellFactors.Add(sellfactor));
+            commodity.Inventory += sellfactor.Count;
+
+            var expected = _sut.GetSellFactor(sellfactor.SellFactorNumber);
+
+            expected.CommodityCode.Should().Be(commodity.Code);
+            expected.Date.Should().Be(sellfactor.Date);
+            expected.Count.Should().Be(sellfactor.Count);
+            expected.BasePrice.Should().Be(sellfactor.BasePrice);
+            expected.TotalPrice.Should().Be(sellfactor.TotalPrice);
+            expected.BuyerName.Should().Be(sellfactor.BuyerName);
+        }
+
+        [Fact]
+        public void GetSellFactor_throw_SellFactorNotFoundException_when_sellfactor_that_you_want_return_given_id_that_not_exist()
+        {
+            var fakesellfactornumber = 7;
+
+            Action Expected = () => _sut.GetSellFactor(fakesellfactornumber);
+            Expected.Should().ThrowExactly<SellFactorNotFoundException>();
+        }
     }
 }

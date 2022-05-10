@@ -225,25 +225,6 @@ namespace StoreManage.Services.Test.Unit.BuyFactors
         }
        
         [Fact]
-        public void GetBuyFactor_check_exist_commodity_have_been_imported_with_inventory_properly()
-        {
-            var category = CategoryFactory.CreateCategory();
-            _dataContext.Manipulate(_ => _.Categories.Add(category));
-
-            var commodity = CommodityFactory.CreateCommodity(category.Id);
-            _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
-
-            var buyFactor = BuyFactorFactory.GenerateBuyFactor(commodity.Code);
-            _dataContext.Manipulate(_ => _.BuyFactors.Add(buyFactor));
-
-            commodity.Inventory += buyFactor.Count;
-
-            var expected = _sut.GetBuyFactor(buyFactor.BuyFactorNumber);
-
-            _dataContext.Commodities.Should().Contain(_ => _.Name == "شیر رامک" && _.Code == 1 && _.Inventory == 14 && _.CategoryId == category.Id);
-        }
-
-        [Fact]
         public void GetBuyFactor_return_buyfactor_with_Its_factornumber_properly()
         {
             var category = CategoryFactory.CreateCategory();

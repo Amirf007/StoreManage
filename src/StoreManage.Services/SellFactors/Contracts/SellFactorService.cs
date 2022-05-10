@@ -13,5 +13,6 @@ namespace StoreManage.Services.SellFactors.Contracts
         void Update(int sellFactorNumber, UpdateSellFactorDto dto);
         void Delete(int sellFactorNumber);
         IList<GetSellFactorDto> GetAll();
+        GetSellFactorDto GetSellFactor(int sellFactorNumber);
     }
 }

@@ -43,6 +43,20 @@ namespace StoreManage.Persistence.EF.SellFactors
             return _dataContext.SellFactors.Find(sellFactorNumber);
         }
 
+        public GetSellFactorDto GetSellFactor(int sellFactorNumber)
+        {
+            return _dataContext.SellFactors.Where(_ => _.SellFactorNumber == sellFactorNumber).Select(_ => new GetSellFactorDto
+            {
+                CommodityCode = _.CommodityCode,
+                Date = _.Date,
+                Count = _.Count,
+                BasePrice = _.BasePrice,
+                TotalPrice = _.TotalPrice,
+                BuyerName = _.BuyerName,
+
+            }).SingleOrDefault();
+        }
+
         public void Remove(SellFactor sellfactor)
         {
             _dataContext.SellFactors.Remove(sellfactor);

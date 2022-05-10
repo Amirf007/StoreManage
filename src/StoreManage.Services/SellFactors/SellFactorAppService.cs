@@ -64,6 +64,17 @@ namespace StoreManage.Services.SellFactors
             return _repository.GetAll();
         }
 
+        public GetSellFactorDto GetSellFactor(int sellFactorNumber)
+        {
+            var sellfactor = _repository.GetSellFactor(sellFactorNumber);
+            if (sellfactor == null)
+            {
+                throw new SellFactorNotFoundException();
+            }
+
+            return sellfactor;
+        }
+
         public void Update(int sellFactorNumber, UpdateSellFactorDto dto)
         {
             SellFactor sellfactor = _repository.GetBySellFactorNumber(sellFactorNumber);
