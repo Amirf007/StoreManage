@@ -9,7 +9,7 @@ namespace StoreManage.Services.SellFactors.Contracts
     public class UpdateSellFactorDto
     {
         public DateTime Date { get; set; }
-        public string Count { get; set; }
+        public int Count { get; set; }
         public string BasePrice { get; set; }
         public string TotalPrice { get; set; }
         public string BuyerName { get; set; }

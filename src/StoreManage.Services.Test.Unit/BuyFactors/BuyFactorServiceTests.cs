@@ -46,6 +46,7 @@ namespace StoreManage.Services.Test.Unit.BuyFactors
 
             var commodity = CommodityFactory.CreateCommodity(category.Id);
             _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
+            var initialbalance = commodity.Inventory;
 
             AddBuyFactorDto dto = AddBuyFactorDtoFactory.GenerateAddBuyFactorDto(commodity.Code);
 
@@ -54,7 +55,7 @@ namespace StoreManage.Services.Test.Unit.BuyFactors
             var expected = _dataContext.Commodities.FirstOrDefault();
             expected.Name.Should().Be(commodity.Name);
             expected.Code.Should().Be(commodity.Code);
-            expected.Inventory.Should().Be(14);
+            expected.Inventory.Should().Be(initialbalance + dto.Count);
         }
 
         [Fact]

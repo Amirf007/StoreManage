@@ -42,5 +42,26 @@ namespace StoreManage.Services.SellFactors
 
             _unitOfWork.Commit();
         }
+
+        public void Update(int sellFactorNumber, UpdateSellFactorDto dto)
+        {
+            SellFactor sellfactor = _repository.GetBySellFactorNumber(sellFactorNumber);
+            if (sellfactor == null)
+            {
+                throw new SellFactorNotFoundException();
+            }
+
+            var commodity = _commodityRepository.GetbyId(sellfactor.CommodityCode);
+            commodity.Inventory -= (dto.Count - sellfactor.Count);
+
+            sellfactor.CommodityCode = dto.CommodityCode;
+            sellfactor.Date = dto.Date;
+            sellfactor.Count = dto.Count;
+            sellfactor.BasePrice = dto.BasePrice;
+            sellfactor.TotalPrice = dto.TotalPrice;
+            sellfactor.BuyerName = dto.BuyerName;
+
+            _unitOfWork.Commit();
+        }
     }
 }

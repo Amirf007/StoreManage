@@ -3,15 +3,15 @@ using StoreManage.Entities;
 using StoreManage.Infrastructure.Application;
 using StoreManage.Infrastructure.Test;
 using StoreManage.Persistence.EF;
-using StoreManage.Persistence.EF.BuyFactors;
 using StoreManage.Persistence.EF.Commodities;
-using StoreManage.Services.BuyFactors;
-using StoreManage.Services.BuyFactors.Contracts;
+using StoreManage.Persistence.EF.SellFactors;
 using StoreManage.Services.Commodities.Contracts;
+using StoreManage.Services.SellFactors;
+using StoreManage.Services.SellFactors.Contracts;
 using StoreManage.Specs.Infrastructure;
-using StoreManage.Test.Tools.BuyFactors;
 using StoreManage.Test.Tools.Categories;
 using StoreManage.Test.Tools.Commodities;
+using StoreManage.Test.Tools.SellFactors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,33 +20,27 @@ using System.Threading.Tasks;
 using Xunit;
 using static StoreManage.Specs.BDDHelper;
 
-namespace StoreManage.Specs.EntryCommodity
+namespace StoreManage.Specs.ExistCommodities
 {
-    [Scenario("ویرایش ورود کالا")]
-    [Feature("",
-        AsA = "فروشنده ",
-        IWantTo = " ورود کالاها را مدیریت کنم ",
-        InOrderTo = "برای هر بار خرید  یک فاکتور خرید داشته باشم و موجودی کالا ها ی خود را افزایش دهم"
-    )]
-    public class UpdateEntryCommodity : EFDataContextDatabaseFixture
+    public class UpdateExistCommodity : EFDataContextDatabaseFixture
     {
         private readonly EFDataContext _dataContext;
-        private readonly BuyFactorService _sut;
-        private readonly BuyFactorRepository _buyfactorrepository;
+        private readonly SellFactorService _sut;
+        private readonly SellFactorRepository _sellfactorrepository;
         private readonly CommodityRepository _commodityRepository;
         private readonly UnitOfWork _unitOfWork;
-        private UpdateBuyFactorDto _dto;
+        private UpdateSellFactorDto _dto;
+        private SellFactor _sellFactor;
         private Category _category;
         private Commodity _commodity;
-        private BuyFactor _buyFactor;
         private int _initialbalance;
-        public UpdateEntryCommodity(ConfigurationFixture configuration) : base(configuration)
+        public UpdateExistCommodity(ConfigurationFixture configuration) : base(configuration)
         {
             _dataContext = CreateDataContext();
             _unitOfWork = new EFUnitOfWork(_dataContext);
-            _buyfactorrepository = new EFBuyFactorRepository(_dataContext);
+            _sellfactorrepository = new EFSellFactorRepository(_dataContext);
             _commodityRepository = new EFCommodityRepository(_dataContext);
-            _sut = new BuyFactorAppService(_buyfactorrepository, _unitOfWork, _commodityRepository);
+            _sut = new SellFactorAppService(_sellfactorrepository, _unitOfWork, _commodityRepository);
         }
 
         [Given("دسته بندی با عنوان 'لبنیات' در فهرست دسته بندی کالاها وجود دارد")]
@@ -61,48 +55,50 @@ namespace StoreManage.Specs.EntryCommodity
         public void GivenAnd()
         {
             _commodity = CommodityFactory.CreateCommodity(_category.Id);
+
             _dataContext.Manipulate(_ => _.Commodities.Add(_commodity));
 
             _initialbalance = _commodity.Inventory;
         }
 
-        [Given("سند ورود کالایی با کد '1' به تعداد '4' عدد در تاریخ '2022/05/08' با قیمت خرید '125000' در فهرست سند ورود کالا وجود دارد")]
+        [Given("سند خروج کالایی با کد '1' به تعداد '3' عدد در تاریخ '2022/05/08' با قیمت پایه '150000' و قیمت کل 450000 در فهرست سند خروجی کالا وجود دارد")]
         public void GivensecondAnd()
         {
-            _buyFactor = BuyFactorFactory.GenerateBuyFactor(_commodity.Code);
+            _sellFactor = SellFactorFactory.GenerateSellFactor(_commodity.Code);
+            _dataContext.Manipulate(_ => _.SellFactors.Add(_sellFactor));
 
-            _dataContext.Manipulate(_ => _.BuyFactors.Add(_buyFactor));
-            _commodity.Inventory += _buyFactor.Count;
+            _commodity.Inventory -= _sellFactor.Count;
         }
 
-        [When("تعداد و قیمت خرید در سند ورود کالایی با کد '1' و تعداد '4' عدد در تاریخ '2022/05/08' با قیمت خرید '125000' را ب تعداد '3' عدد و قیمت خرید '130000' تغییر میدهم ")]
+        [When(" تعداد و قیمت کل در سند خروج کالایی با کد '1' به تعداد '3' عدد در تاریخ '2022/05/08' با قیمت پایه '150000' و قیمت کل '450000' را ب تعداد '2' عدد و قیمت کل '300000' تغییر میدهم ")]
         public void When()
         {
-            _dto = UpdateBuyFactorDtoFactory.GenerateUpdateBuyFactorDto(_commodity.Code);
+            _dto = UpdateSellFactorDtoFactory.GenerateUpdateSellFactorDto(_commodity.Code);
 
-            _sut.Update(_buyFactor.BuyFactorNumber, _dto);
+            _sut.Update(_sellFactor.SellFactorNumber, _dto);
         }
 
-        [Then("سند ورود کالایی با کد '1' به تعداد '3' عدد در تاریخ '2022/05/08' با قیمت خرید '130000' در فهرست سند ورودی کالا باید وجود داشته باشد")]
+        [Then("سند خروج کالایی با کد '1' به تعداد '2' عدد در تاریخ '2022/05/08' با قیمت پایه '150000' و قیمت کل '300000' در فهرست سند خروجی کالا باید وجود داشته باشد")]
         public void Then()
         {
-            var expected = _dataContext.BuyFactors.FirstOrDefault();
+            var expected = _dataContext.SellFactors.FirstOrDefault();
 
             expected.CommodityCode.Should().Be(_commodity.Code);
             expected.Date.Should().Be(_dto.Date);
-            expected.BuyPrice.Should().Be(_dto.BuyPrice);
+            expected.BasePrice.Should().Be(_dto.BasePrice);
+            expected.TotalPrice.Should().Be(_dto.TotalPrice);
             expected.Count.Should().Be(_dto.Count);
-            expected.SellerName.Should().Be(_dto.SellerName);
+            expected.BuyerName.Should().Be(_dto.BuyerName);
         }
 
-        [Then("کالایی با نام 'شیر رامک' و کد '1' و موجودی '13' عدد در  دسته بندی کالا با عنوان 'لبنیات' باید وجود داشته باشد")]
+        [Then("کالایی با نام 'شیر رامک' و کد '1' و موجودی '8' عدد در  دسته بندی کالا با عنوان 'لبنیات' باید وجود داشته باشد")]
         public void ThenAnd()
         {
             var expected = _dataContext.Commodities.FirstOrDefault();
 
             expected.Name.Should().Be(_commodity.Name);
             expected.Code.Should().Be(_commodity.Code);
-            expected.Inventory.Should().Be(_initialbalance + _buyFactor.Count);
+            expected.Inventory.Should().Be(_initialbalance - _dto.Count);
         }
 
         [Fact]

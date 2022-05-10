@@ -11,5 +11,6 @@ namespace StoreManage.Services.SellFactors.Contracts
     public interface SellFactorRepository : Repository
     {
         void Add(SellFactor sellfactor);
+        SellFactor GetBySellFactorNumber(int sellFactorNumber);
     }
 }

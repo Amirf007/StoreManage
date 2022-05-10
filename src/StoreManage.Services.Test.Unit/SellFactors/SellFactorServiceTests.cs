@@ -68,6 +68,7 @@ namespace StoreManage.Services.Test.Unit.SellFactors
 
             var commodity = CommodityFactory.CreateCommodity(category.Id);
             _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
+            var initialbalance = commodity.Inventory;
 
             var dto = AddSellFactorDtoFactory.GenerateAddSellFactorDto(commodity.Code);
 
@@ -76,7 +77,74 @@ namespace StoreManage.Services.Test.Unit.SellFactors
             var expected = _dataContext.Commodities.FirstOrDefault();
             expected.Name.Should().Be(commodity.Name);
             expected.Code.Should().Be(commodity.Code);
-            expected.Inventory.Should().Be(7);
+            expected.Inventory.Should().Be(initialbalance - dto.Count);
+        }
+
+        [Fact]
+        public void Update_update_inventory_of_existcommodity_properly()
+        {
+            var category = CategoryFactory.CreateCategory();
+            _dataContext.Manipulate(_ => _.Categories.Add(category));
+
+            var commodity = CommodityFactory.CreateCommodity(category.Id);
+            _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
+            var initialbalance = commodity.Inventory;
+
+            var sellFactor = SellFactorFactory.GenerateSellFactor(commodity.Code);
+            _dataContext.Manipulate(_ => _.SellFactors.Add(sellFactor));
+            commodity.Inventory -= sellFactor.Count;
+
+            var dto = UpdateSellFactorDtoFactory.GenerateUpdateSellFactorDto(commodity.Code);
+
+            _sut.Update(sellFactor.SellFactorNumber, dto);
+
+            var expected = _dataContext.Commodities.FirstOrDefault();
+            expected.Name.Should().Be(commodity.Name);
+            expected.Code.Should().Be(commodity.Code);
+            expected.Inventory.Should().Be(initialbalance - dto.Count);
+        }
+
+        [Fact]
+        public void Update_update_sellfactor_properly()
+        {
+            var category = CategoryFactory.CreateCategory();
+            _dataContext.Manipulate(_ => _.Categories.Add(category));
+
+            var commodity = CommodityFactory.CreateCommodity(category.Id);
+            _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
+
+            var sellFactor = SellFactorFactory.GenerateSellFactor(commodity.Code);
+            _dataContext.Manipulate(_ => _.SellFactors.Add(sellFactor));
+            commodity.Inventory -= sellFactor.Count;
+
+            var dto = UpdateSellFactorDtoFactory.GenerateUpdateSellFactorDto(commodity.Code);
+
+            _sut.Update(sellFactor.SellFactorNumber, dto);
+
+            var expected = _dataContext.SellFactors.FirstOrDefault();
+            expected.CommodityCode.Should().Be(dto.CommodityCode);
+            expected.Date.Should().Be(dto.Date);
+            expected.BasePrice.Should().Be(dto.BasePrice);
+            expected.TotalPrice.Should().Be(dto.TotalPrice);
+            expected.Count.Should().Be(dto.Count);
+            expected.BuyerName.Should().Be(dto.BuyerName);
+        }
+
+        [Fact]
+        public void Update_throw_SellFactorNotFoundException_when_sellfactor_with_given_sellfactornumber_that_not_exist()
+        {
+            var fakesellfactornumber = 170;
+
+            var category = CategoryFactory.CreateCategory();
+            _dataContext.Manipulate(_ => _.Categories.Add(category));
+
+            var commodity = CommodityFactory.CreateCommodity(category.Id);
+            _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
+
+            var dto = UpdateSellFactorDtoFactory.GenerateUpdateSellFactorDto(commodity.Code);
+
+            Action Expected = () => _sut.Update(fakesellfactornumber, dto);
+            Expected.Should().ThrowExactly<SellFactorNotFoundException>();
         }
     }
 }

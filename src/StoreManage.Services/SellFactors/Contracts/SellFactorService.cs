@@ -10,5 +10,6 @@ namespace StoreManage.Services.SellFactors.Contracts
     public interface SellFactorService : Service
     {
         void Add(AddSellFactorDto dto);
+        void Update(int sellFactorNumber, UpdateSellFactorDto dto);
     }
 }
