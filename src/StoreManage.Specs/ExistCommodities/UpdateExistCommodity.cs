@@ -40,16 +40,18 @@ namespace StoreManage.Specs.ExistCommodities
         private Category _category;
         private Commodity _commodity;
         private int _initialbalance;
-        public UpdateExistCommodity(ConfigurationFixture configuration) : base(configuration)
+        public UpdateExistCommodity(ConfigurationFixture configuration)
+            : base(configuration)
         {
             _dataContext = CreateDataContext();
             _unitOfWork = new EFUnitOfWork(_dataContext);
             _sellfactorrepository = new EFSellFactorRepository(_dataContext);
             _commodityRepository = new EFCommodityRepository(_dataContext);
-            _sut = new SellFactorAppService(_sellfactorrepository, _unitOfWork, _commodityRepository);
+            _sut = new SellFactorAppService
+                (_sellfactorrepository, _unitOfWork, _commodityRepository);
         }
 
-        [Given("دسته بندی با عنوان 'لبنیات' در فهرست دسته بندی کالاها وجود دارد")]
+        [Given("دسته بندی با عنوان 'لبنیات' در فهرست دسته بندی های کالا وجود دارد")]
         public void Given()
         {
             _category = CategoryFactory.CreateCategory();
@@ -61,16 +63,15 @@ namespace StoreManage.Specs.ExistCommodities
         public void GivenAnd()
         {
             _commodity = CommodityFactory.CreateCommodity(_category.Id);
-
             _dataContext.Manipulate(_ => _.Commodities.Add(_commodity));
 
             _initialbalance = _commodity.Inventory;
         }
 
-        [Given("سند خروج کالایی با کد '1' به تعداد '3' عدد در تاریخ '2022/05/08' با قیمت پایه '150000' و قیمت کل 450000 در فهرست سند خروجی کالا وجود دارد")]
+        [Given("سند خروج کالایی با کد '1' به تعداد '3' عدد در تاریخ '2022/05/08' با قیمت پایه '150000' و قیمت کل 450000 در فهرست سندهای خروجی کالا وجود دارد")]
         public void GivensecondAnd()
         {
-            _sellFactor = SellFactorFactory.GenerateSellFactor(_commodity.Code);
+            _sellFactor=SellFactorFactory.GenerateSellFactor(_commodity.Code);
             _dataContext.Manipulate(_ => _.SellFactors.Add(_sellFactor));
 
             _commodity.Inventory -= _sellFactor.Count;
@@ -79,12 +80,13 @@ namespace StoreManage.Specs.ExistCommodities
         [When(" تعداد و قیمت کل در سند خروج کالایی با کد '1' به تعداد '3' عدد در تاریخ '2022/05/08' با قیمت پایه '150000' و قیمت کل '450000' را ب تعداد '2' عدد و قیمت کل '300000' تغییر میدهم ")]
         public void When()
         {
-            _dto = UpdateSellFactorDtoFactory.GenerateUpdateSellFactorDto(_commodity.Code);
+            _dto = UpdateSellFactorDtoFactory
+                .GenerateUpdateSellFactorDto(_commodity.Code);
 
             _sut.Update(_sellFactor.SellFactorNumber, _dto);
         }
 
-        [Then("سند خروج کالایی با کد '1' به تعداد '2' عدد در تاریخ '2022/05/08' با قیمت پایه '150000' و قیمت کل '300000' در فهرست سند خروجی کالا باید وجود داشته باشد")]
+        [Then("سند خروج کالایی با کد '1' به تعداد '2' عدد در تاریخ '2022/05/08' با قیمت پایه '150000' و قیمت کل '300000' در فهرست سند های خروجی کالا باید وجود داشته باشد")]
         public void Then()
         {
             var expected = _dataContext.SellFactors.FirstOrDefault();

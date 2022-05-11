@@ -39,16 +39,18 @@ namespace StoreManage.Specs.ExistCommodities
         private Category _category;
         private Commodity _commodity;
         private GetSellFactorDto expected;
-        public GetExistCommodity(ConfigurationFixture configuration) : base(configuration)
+        public GetExistCommodity(ConfigurationFixture configuration)
+            : base(configuration)
         {
             _dataContext = CreateDataContext();
             _unitOfWork = new EFUnitOfWork(_dataContext);
             _sellfactorrepository = new EFSellFactorRepository(_dataContext);
             _commodityRepository = new EFCommodityRepository(_dataContext);
-            _sut = new SellFactorAppService(_sellfactorrepository, _unitOfWork, _commodityRepository);
+            _sut = new SellFactorAppService
+                (_sellfactorrepository, _unitOfWork, _commodityRepository);
         }
 
-        [Given("دسته بندی با عنوان 'لبنیات' در فهرست دسته بندی کالاها وجود دارد")]
+        [Given("دسته بندی با عنوان 'لبنیات' در فهرست دسته بندی های کالا وجود دارد")]
         public void Given()
         {
             _category = CategoryFactory.CreateCategory();
@@ -67,7 +69,7 @@ namespace StoreManage.Specs.ExistCommodities
         [Given("سند خروج کالایی با کد '1' به تعداد '3' عدد در تاریخ '2022/05/08' با قیمت پایه '150000' و قیمت کل 450000 در فهرست سند خروجی کالا وجود دارد")]
         public void GivensecondAnd()
         {
-            _sellFactor = SellFactorFactory.GenerateSellFactor(_commodity.Code);
+            _sellFactor=SellFactorFactory.GenerateSellFactor(_commodity.Code);
             _dataContext.Manipulate(_ => _.SellFactors.Add(_sellFactor));
 
             _commodity.Inventory -= _sellFactor.Count;
@@ -82,7 +84,6 @@ namespace StoreManage.Specs.ExistCommodities
         [Then("سند خروج کالایی با کد '1' به تعداد '3' در تاریخ '2022/05/08' و با قیمت پایه '150000' و قیمت کل '450000' در فهرست سند های خروج کالا باید وجود داشته باشد")]
         public void Then()
         {
-
             expected.CommodityCode.Should().Be(_commodity.Code);
             expected.Date.Should().Be(_sellFactor.Date);
             expected.Count.Should().Be(_sellFactor.Count);

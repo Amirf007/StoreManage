@@ -5,6 +5,7 @@ using StoreManage.Persistence.EF.Categories;
 using StoreManage.Services.Categories;
 using StoreManage.Services.Categories.Contracts;
 using StoreManage.Specs.Infrastructure;
+using StoreManage.Test.Tools.Categories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +30,8 @@ namespace StoreManage.Specs.Categories
         private readonly UnitOfWork _unitOfWork;
         private AddCategoryDto _dto;
 
-        public AddCategory(ConfigurationFixture configuration) : base(configuration)
+        public AddCategory(ConfigurationFixture configuration)
+            :base(configuration)
         {
             _dataContext = CreateDataContext();
             _unitOfWork = new EFUnitOfWork(_dataContext);
@@ -42,13 +44,10 @@ namespace StoreManage.Specs.Categories
         {
         }
 
-        [When("دسته بندی با عنوان 'لبنیات' تعریف میکنیم" )]
+        [When("دسته بندی با عنوان 'لبنیات' تعریف میکنم" )]
         public void When()
         {
-            _dto = new AddCategoryDto()
-            {
-                Title = "لبنیات "
-            };
+            _dto = AddCategoryDtoFactory.GenerateAddCategoryDto();
 
             _sut.Add(_dto);
         }

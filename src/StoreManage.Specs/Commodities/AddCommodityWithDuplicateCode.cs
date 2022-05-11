@@ -21,13 +21,13 @@ using static StoreManage.Specs.BDDHelper;
 
 namespace StoreManage.Specs.Commodities
 {
-    [Scenario(" تعریف کالا ")]
+    [Scenario("تعریف کالا با کد تکراری ")]
     [Feature("",
-        AsA = "فروشنده ",
-        IWantTo = " کالاها را مدیریت کنم ",
-        InOrderTo = "کالا ها را دسته بندی و خرید و فروش کنم"
-    )]
-    public class AddCommodity : EFDataContextDatabaseFixture
+       AsA = "فروشنده ",
+       IWantTo = " کالاها را مدیریت کنم ",
+       InOrderTo = "کالا ها را دسته بندی و خرید و فروش کنم"
+   )]
+    public class AddCommodityWithDuplicateCode : EFDataContextDatabaseFixture
     {
         private readonly EFDataContext _dataContext;
         private readonly CommodityService _sut;
@@ -35,18 +35,20 @@ namespace StoreManage.Specs.Commodities
         private readonly CategoryRepository _categoryRepository;
         private readonly UnitOfWork _unitOfWork;
         private AddCommodityDto _dto;
+        private Commodity _commodity;
         private Category _category;
-        public AddCommodity(ConfigurationFixture configuration)
+        Action expected;
+        public AddCommodityWithDuplicateCode(ConfigurationFixture configuration)
             : base(configuration)
         {
             _dataContext = CreateDataContext();
             _unitOfWork = new EFUnitOfWork(_dataContext);
             _commodityrepository = new EFCommodityRepository(_dataContext);
             _categoryRepository = new EFCategoryRepository(_dataContext);
-            _sut = new CommodityAppService(_commodityrepository, _unitOfWork,_categoryRepository);
+            _sut = new CommodityAppService(_commodityrepository, _unitOfWork, _categoryRepository);
         }
 
-        [Given("دسته بندی با عنوان 'لبنیات' در فهرست دسته بندی کالا وجود دارد")]
+        [Given("دسته بندی با عنوان 'لبنیات'در فهرست دسته بندی کالاها وجود دارد")]
         public void Given()
         {
             _category = CategoryFactory.CreateCategory();
@@ -54,39 +56,44 @@ namespace StoreManage.Specs.Commodities
             _dataContext.Manipulate(_ => _.Categories.Add(_category));
         }
 
-        [Given("هیچ کالایی در دسته بندی با عنوان 'لبنیات' وجود ندارد")]
+        [Given("کالایی با کد '1' در دسته بندی با عنوان 'لبنیات' وجود دارد")]
         public void GivenAnd()
         {
+            _commodity = CommodityFactory.CreateCommodity(_category.Id);
+
+            _dataContext.Manipulate(_ => _.Commodities.Add(_commodity));
         }
 
-        [When("کالایی با کد '1' و نام 'شیر رامک' و قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد در دسته بندی با عنوان 'لبنیات' تعریف میکنم")]
+        [When(" کالایی با کد '1' و نام 'شیر رامک' و قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد در دسته بندی با عنوان 'لبنیات' تعریف میکنم  ")]
         public void When()
         {
             _dto = AddCommodityDtoFactory.GenerateAddCommodityDto(_category.Id);
+            _dto.Code = _commodity.Code;
 
-            _sut.Add(_dto);
+            expected = () => _sut.Add(_dto);
         }
 
-        [Then("کالایی با کد '1' و نام 'شیر رامک' و قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد در  دسته بندی کالا با عنوان 'لبنیات' باید وجود داشته باشد")]
+        [Then("در فهرست کالاها تنها یک کالا باید با کد '1'وجود داشته باشد")]
         public void Then()
         {
-            var expected = _dataContext.Commodities.FirstOrDefault();
-
-            expected.Name.Should().Be(_dto.Name);
-            expected.Price.Should().Be(_dto.Price);
-            expected.Inventory.Should().Be(_dto.Inventory);
-            expected.MaxInventory.Should().Be(_dto.MaxInventory);
-            expected.MinInventory.Should().Be(_dto.MinInventory);
-            expected.Category.Id.Should().Be(_dto.CategoryId);
+            _dataContext.Commodities.Where(_ => _.Code == _commodity.Code)
+                .Should().HaveCount(1);
         }
 
-        [Fact]      
+        [And("خطایی با عنوان 'کد کالا تکراریست ' باید رخ دهد")]
+        public void ThenAnd()
+        {
+            expected.Should().ThrowExactly<DuplicateCommodityCodeException>();
+        }
+
+        [Fact]
         public void Run()
         {
             Given();
             GivenAnd();
             When();
             Then();
+            ThenAnd();
         }
     }
 }

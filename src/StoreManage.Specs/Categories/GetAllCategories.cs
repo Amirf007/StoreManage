@@ -18,7 +18,7 @@ using static StoreManage.Specs.BDDHelper;
 
 namespace StoreManage.Specs.Categories
 {
-    [Scenario("مشاهده ی فهرست دسته بندی ها")]
+    [Scenario("مشاهده ی فهرست دسته بندی های کالا")]
     [Feature("",
         AsA = "فروشنده ",
         IWantTo = " دسته بندی کالاها را مدیریت کنم  ",
@@ -31,7 +31,8 @@ namespace StoreManage.Specs.Categories
         private readonly CategoryRepository _repository;
         private readonly UnitOfWork _unitOfWork;
         private IList<GetCategoryDto> expected;
-        public GetAllCategories(ConfigurationFixture configuration) : base(configuration)
+        public GetAllCategories(ConfigurationFixture configuration)
+            : base(configuration)
         {
             _dataContext = CreateDataContext();
             _unitOfWork = new EFUnitOfWork(_dataContext);
@@ -40,7 +41,7 @@ namespace StoreManage.Specs.Categories
         }
 
 
-        [Given("دسته بندی هایی با عنوان های 'لبنیات' و 'تنقلات' و 'شوینده ها' در فهرست دسته بندی های کالاها وجود دارد")]
+        [Given("دسته بندی هایی با عنوان های 'لبنیات' و 'تنقلات' و 'شوینده ها' در فهرست دسته بندی های کالا وجود دارد")]
         public void Given()
         {
             var categories = CategoriesFactory.GenerateCategories();
@@ -48,7 +49,7 @@ namespace StoreManage.Specs.Categories
             _dataContext.Manipulate(_ => _.Categories.AddRange(categories));
         }
 
-        [When("درخواست نمایش فهرست دسته بندی ها را میدهم")]
+        [When("درخواست نمایش فهرست دسته بندی های کالا را میدهم")]
         public void When()
         {
             expected = _sut.GetAll();
@@ -60,7 +61,7 @@ namespace StoreManage.Specs.Categories
             expected.Should().HaveCount(3);
         }
 
-        [Then("در فهرست دسته بندی کالاها دسته بندی هایی با عنوان های ' لبنیات' و ' تنقلات ' و 'شوینده ها' باید وجود داشته باشد")]
+        [Then("در فهرست دسته بندی های کالا دسته بندی هایی با عنوان های ' لبنیات' و ' تنقلات ' و 'شوینده ها' باید وجود داشته باشد")]
         public void ThenAnd()
         {
             expected.Should().Contain(_ => _.Title == "لبنیات");

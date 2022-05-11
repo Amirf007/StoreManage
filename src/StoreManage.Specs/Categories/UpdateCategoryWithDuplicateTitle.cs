@@ -18,7 +18,7 @@ using static StoreManage.Specs.BDDHelper;
 
 namespace StoreManage.Specs.Categories
 {
-    [Scenario("ویرایش دسته بندی ")]
+    [Scenario("ویرایش دسته بندی با عنوان تکراری ")]
     [Feature("",
         AsA = "فروشنده ",
         IWantTo = " دسته بندی کالاها را مدیریت کنم  ",
@@ -32,8 +32,10 @@ namespace StoreManage.Specs.Categories
         private readonly UnitOfWork _unitOfWork;
         private UpdateCategoryDto _dto;
         private Category _category;
+        private Category _existcategory;
         Action expected;
-        public UpdateCategoryWithDuplicateTitle(ConfigurationFixture configuration) : base(configuration)
+        public UpdateCategoryWithDuplicateTitle(ConfigurationFixture configuration)
+            : base(configuration)
         {
             _dataContext = CreateDataContext();
             _unitOfWork = new EFUnitOfWork(_dataContext);
@@ -41,7 +43,7 @@ namespace StoreManage.Specs.Categories
             _sut = new CategoryAppService(_repository, _unitOfWork);
         }
 
-        [Given("دسته بندی با عنوان 'لبنیات' در فهرست دسته بندی کالا وجود دارد")]
+        [Given("دسته بندی کالا با عنوان 'لبنیات' در فهرست دسته بندی های کالا وجود دارد")]
         public void Given()
         {
             _category = CategoryFactory.CreateCategory();
@@ -49,18 +51,24 @@ namespace StoreManage.Specs.Categories
             _dataContext.Manipulate(_ => _.Categories.Add(_category));
         }
 
-        [When("عنوان دسته بندی با عنوان 'لبنیات' را ب ' لبنیات' تغییر میدیم")]
+        [Given("دسته بندی کالا با عنوان 'شیر و ماست' در فهرست دسته بندی های کالا وجود دارد")]
+        public void GivenAnd()
+        {
+            _existcategory = CategoryFactory.CreateCategory();
+            _existcategory.Title = "شیر و ماست";
+
+            _dataContext.Manipulate(_ => _.Categories.Add(_existcategory));
+        }
+
+        [When("عنوان دسته بندی با عنوان 'لبنیات' را ب 'شیر و ماست' تغییر میدیم")]
         public void When()
         {
-            _dto = new UpdateCategoryDto
-            {
-                Title = _category.Title
-            };
+            _dto = UpdateCategoryDtoFactory.GenerateUpdateCategoryDto(_existcategory.Title);
 
             expected = () => _sut.Update(_category.Id,_dto);
         }
 
-        [Then("تنها یک دسته بندی با عنوان ' لبنیات' باید در فهرست دسته بندی کالا وجود داشته باشد")]
+        [Then("تنها یک دسته بندی کالا با عنوان 'شیر و ماست' باید در فهرست دسته بندی کالا وجود داشته باشد")]
         public void Then()
         {
             _dataContext.Categories.Where(_ => _.Title == _dto.Title)
@@ -70,13 +78,14 @@ namespace StoreManage.Specs.Categories
         [And("خطایی با عنوان’عنوان دسته بندی کالا تکراریست’ باید رخ دهد")]
         public void ThenAnd()
         {
-            expected.Should().ThrowExactly<CategoryIsAlreadyExistException>();
+            expected.Should().ThrowExactly<DuplicateCategoryTitleException>();
         }
 
         [Fact]
         public void Run()
         {
             Given();
+            GivenAnd();
             When();
             Then();
             ThenAnd();

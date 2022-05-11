@@ -39,13 +39,15 @@ namespace StoreManage.Specs.EntryCommodity
         private Commodity _commodity;
         private BuyFactor _buyFactor;
         private GetBuyFactorDto expected;
-        public GetEntryCommodity(ConfigurationFixture configuration) : base(configuration)
+        public GetEntryCommodity(ConfigurationFixture configuration)
+            : base(configuration)
         {
             _dataContext = CreateDataContext();
             _unitOfWork = new EFUnitOfWork(_dataContext);
             _buyfactorrepository = new EFBuyFactorRepository(_dataContext);
             _commodityRepository = new EFCommodityRepository(_dataContext);
-            _sut = new BuyFactorAppService(_buyfactorrepository, _unitOfWork, _commodityRepository);
+            _sut = new BuyFactorAppService
+                (_buyfactorrepository, _unitOfWork, _commodityRepository);
         }
 
         [Given("دسته بندی با عنوان 'لبنیات' در فهرست دسته بندی کالاها وجود دارد")]
@@ -68,8 +70,8 @@ namespace StoreManage.Specs.EntryCommodity
         public void GivensecondAnd()
         {
             _buyFactor = BuyFactorFactory.GenerateBuyFactor(_commodity.Code);
-
             _dataContext.Manipulate(_ => _.BuyFactors.Add(_buyFactor));
+
             _commodity.Inventory += _buyFactor.Count;
         }
 

@@ -40,16 +40,18 @@ namespace StoreManage.Specs.EntryCommodity
         private Commodity _commodity;
         private BuyFactor _buyFactor;
         private int _initialbalance;
-        public UpdateEntryCommodity(ConfigurationFixture configuration) : base(configuration)
+        public UpdateEntryCommodity(ConfigurationFixture configuration)
+            : base(configuration)
         {
             _dataContext = CreateDataContext();
             _unitOfWork = new EFUnitOfWork(_dataContext);
             _buyfactorrepository = new EFBuyFactorRepository(_dataContext);
             _commodityRepository = new EFCommodityRepository(_dataContext);
-            _sut = new BuyFactorAppService(_buyfactorrepository, _unitOfWork, _commodityRepository);
+            _sut = new BuyFactorAppService
+                (_buyfactorrepository, _unitOfWork, _commodityRepository);
         }
 
-        [Given("دسته بندی با عنوان 'لبنیات' در فهرست دسته بندی کالاها وجود دارد")]
+        [Given("دسته بندی با عنوان 'لبنیات' در فهرست دسته بندی های کالا وجود دارد")]
         public void Given()
         {
             _category = CategoryFactory.CreateCategory();
@@ -66,24 +68,25 @@ namespace StoreManage.Specs.EntryCommodity
             _initialbalance = _commodity.Inventory;
         }
 
-        [Given("سند ورود کالایی با کد '1' به تعداد '4' عدد در تاریخ '2022/05/08' با قیمت خرید '125000' در فهرست سند ورود کالا وجود دارد")]
+        [Given("سند ورود کالایی با کد '1' به تعداد '4' عدد در تاریخ '2022/05/08' با قیمت خرید '125000' در فهرست سند های ورود کالا وجود دارد")]
         public void GivensecondAnd()
         {
             _buyFactor = BuyFactorFactory.GenerateBuyFactor(_commodity.Code);
-
             _dataContext.Manipulate(_ => _.BuyFactors.Add(_buyFactor));
+
             _commodity.Inventory += _buyFactor.Count;
         }
 
         [When("تعداد و قیمت خرید در سند ورود کالایی با کد '1' و تعداد '4' عدد در تاریخ '2022/05/08' با قیمت خرید '125000' را ب تعداد '3' عدد و قیمت خرید '130000' تغییر میدهم ")]
         public void When()
         {
-            _dto = UpdateBuyFactorDtoFactory.GenerateUpdateBuyFactorDto(_commodity.Code);
+            _dto = UpdateBuyFactorDtoFactory
+                .GenerateUpdateBuyFactorDto(_commodity.Code);
 
             _sut.Update(_buyFactor.BuyFactorNumber, _dto);
         }
 
-        [Then("سند ورود کالایی با کد '1' به تعداد '3' عدد در تاریخ '2022/05/08' با قیمت خرید '130000' در فهرست سند ورودی کالا باید وجود داشته باشد")]
+        [Then("سند ورود کالایی با کد '1' به تعداد '3' عدد در تاریخ '2022/05/08' با قیمت خرید '130000' در فهرست سند های ورودی کالا باید وجود داشته باشد")]
         public void Then()
         {
             var expected = _dataContext.BuyFactors.FirstOrDefault();

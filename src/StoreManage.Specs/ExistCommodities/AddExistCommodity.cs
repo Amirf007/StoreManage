@@ -22,7 +22,7 @@ using static StoreManage.Specs.BDDHelper;
 
 namespace StoreManage.Specs.ExistCommodities
 {
-    [Scenario("تعریف خروج کالا ")]
+    [Scenario(" تعریف خروج کالا ")]
     [Feature("",
        AsA = "فروشنده ",
        IWantTo = " خروج کالاها را مدیریت کنم ",
@@ -39,16 +39,18 @@ namespace StoreManage.Specs.ExistCommodities
         private Category _category;
         private Commodity _commodity;
         private int _initialbalance;
-        public AddExistCommodity(ConfigurationFixture configuration) : base(configuration)
+        public AddExistCommodity(ConfigurationFixture configuration)
+            : base(configuration)
         {
             _dataContext = CreateDataContext();
             _unitOfWork = new EFUnitOfWork(_dataContext);
             _sellfactorrepository = new EFSellFactorRepository(_dataContext);
             _commodityRepository = new EFCommodityRepository(_dataContext);
-            _sut = new SellFactorAppService(_sellfactorrepository, _unitOfWork, _commodityRepository);
+            _sut = new SellFactorAppService
+                (_sellfactorrepository, _unitOfWork, _commodityRepository);
         }
 
-        [Given("دسته بندی با عنوان 'لبنیات' در فهرست دسته بندی کالاها وجود دارد")]
+        [Given("دسته بندی با عنوان 'لبنیات' در فهرست دسته بندی های کالا وجود دارد")]
         public void Given()
         {
             _category = CategoryFactory.CreateCategory();
@@ -65,16 +67,17 @@ namespace StoreManage.Specs.ExistCommodities
             _initialbalance = _commodity.Inventory;
         }
 
-        [Given("هیچ سند خروج کالایی در فهرست سند خروجی کالا وجود ندارد")]
+        [Given("هیچ سند خروج کالایی در فهرست سند های خروجی کالا وجود ندارد")]
         public void GivenSecondAnd()
         {
 
         }
 
-        [When("تعداد '3' عدد از کالایی با کد '1'  قیمت پایه '150000' و قیمت کل '450000' در تاریخ '19 / 02 / 1400'  خارج میکنم و میفروشم  ")]
+        [When("تعداد '3' عدد از کالایی با کد '1'  قیمت پایه '150000' و قیمت کل '450000' در تاریخ '2022/05/08'  خارج میکنم و میفروشم  ")]
         public void When()
         {
-            _dto = AddSellFactorDtoFactory.GenerateAddSellFactorDto(_commodity.Code);
+            _dto = AddSellFactorDtoFactory
+                .GenerateAddSellFactorDto(_commodity.Code);
 
             _sut.Add(_dto);
         }

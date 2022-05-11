@@ -38,16 +38,18 @@ namespace StoreManage.Specs.EntryCommodity
         private Category _category;
         private Commodity _commodity;
         private BuyFactor _buyFactor;
-        public DeleteEntryCommodity(ConfigurationFixture configuration) : base(configuration)
+        public DeleteEntryCommodity(ConfigurationFixture configuration)
+            : base(configuration)
         {
             _dataContext = CreateDataContext();
             _unitOfWork = new EFUnitOfWork(_dataContext);
             _buyfactorrepository = new EFBuyFactorRepository(_dataContext);
             _commodityRepository = new EFCommodityRepository(_dataContext);
-            _sut = new BuyFactorAppService(_buyfactorrepository, _unitOfWork, _commodityRepository);
+            _sut = new BuyFactorAppService
+                (_buyfactorrepository, _unitOfWork, _commodityRepository);
         }
 
-        [Given("دسته بندی با عنوان 'لبنیات' در فهرست دسته بندی کالاها وجود دارد")]
+        [Given("دسته بندی با عنوان 'لبنیات' در فهرست دسته بندی های کالا وجود دارد")]
         public void Given()
         {
             _category = CategoryFactory.CreateCategory();
@@ -63,12 +65,12 @@ namespace StoreManage.Specs.EntryCommodity
             _dataContext.Manipulate(_ => _.Commodities.Add(_commodity));
         }
 
-        [Given("سند ورود کالایی با کد '1' به تعداد '4' عدد در تاریخ '2022/05/08' با قیمت خرید '125000' در فهرست سند ورود کالا وجود دارد")]
-        public void GivenAnd2()
+        [Given("سند ورود کالایی با کد '1' به تعداد '4' عدد در تاریخ '2022/05/08' با قیمت خرید '125000' در فهرست سند های ورود کالا وجود دارد")]
+        public void GivenSecondAnd()
         {
             _buyFactor = BuyFactorFactory.GenerateBuyFactor(_commodity.Code);
-
             _dataContext.Manipulate(_ => _.BuyFactors.Add(_buyFactor));
+
             _commodity.Inventory += _buyFactor.Count;
         }
 
@@ -78,7 +80,7 @@ namespace StoreManage.Specs.EntryCommodity
             _sut.Delete(_buyFactor.BuyFactorNumber);
         }
 
-        [Then("هیچ سند خروج کالایی در فهرست سند خروج کالا نباید وجود داشته باشد")]
+        [Then("هیچ سند خروج کالایی در فهرست سند های خروج کالا نباید وجود داشته باشد")]
         public void Then()
         {
             _dataContext.BuyFactors.Should().HaveCount(0);
@@ -99,7 +101,7 @@ namespace StoreManage.Specs.EntryCommodity
         {
             Given();
             GivenAnd();
-            GivenAnd2();
+            GivenSecondAnd();
             When();
             Then();
             ThenAnd();

@@ -40,16 +40,18 @@ namespace StoreManage.Specs.EntryCommodity
         private BuyFactor _buyFactor;
         private BuyFactor _secondbuyFactor;
         private IList<GetBuyFactorDto> expected;
-        public GetAllEntryCommodities(ConfigurationFixture configuration) : base(configuration)
+        public GetAllEntryCommodities(ConfigurationFixture configuration)
+            : base(configuration)
         {
             _dataContext = CreateDataContext();
             _unitOfWork = new EFUnitOfWork(_dataContext);
             _buyfactorrepository = new EFBuyFactorRepository(_dataContext);
             _commodityRepository = new EFCommodityRepository(_dataContext);
-            _sut = new BuyFactorAppService(_buyfactorrepository, _unitOfWork, _commodityRepository);
+            _sut = new BuyFactorAppService
+                (_buyfactorrepository, _unitOfWork, _commodityRepository);
         }
 
-        [Given("دسته بندی با عنوان 'لبنیات' در فهرست دسته بندی کالاها وجود دارد")]
+        [Given("دسته بندی با عنوان 'لبنیات' در فهرست دسته بندی های کالا وجود دارد")]
         public void Given()
         {
             _category = CategoryFactory.CreateCategory();
@@ -85,12 +87,24 @@ namespace StoreManage.Specs.EntryCommodity
             expected = _sut.GetAll();
         }
 
-        [Then("سند های ورود کالایی با کد '1'و تعداد های '4' و '1' در تاریخ '2022/05/08' و ب قیمت های خرید '125000' و '130000' در فهرست سند های ورود کالا باید وجود داشته باشند ")]
+        [Then("فهرست ورودی های کالا ی موجود باید شامل 3 ورود کالا باشد")]
         public void Then()
         {
-            _dataContext.BuyFactors.Should().HaveCount(2);
-            _dataContext.BuyFactors.Should().Contain(_ => _.CommodityCode == _commodity.Code && _.Count == _buyFactor.Count && _.Date == _buyFactor.Date && _.BuyPrice == _buyFactor.BuyPrice && _.SellerName == _buyFactor.SellerName);
-            _dataContext.BuyFactors.Should().Contain(_ => _.CommodityCode == _commodity.Code && _.Count == _secondbuyFactor.Count && _.Date == _secondbuyFactor.Date && _.BuyPrice == _secondbuyFactor.BuyPrice && _.SellerName == _secondbuyFactor.SellerName);
+            expected.Should().HaveCount(2);
+        }
+
+        [Then("سند های ورود کالایی با کد '1'و تعداد های '4' و '1' در تاریخ '2022/05/08' و ب قیمت های خرید '125000' و '130000' در فهرست سند های ورود کالا باید وجود داشته باشند ")]
+        public void ThenAnd()
+        {
+            expected.Should().Contain(_ => _.CommodityCode == _commodity.Code 
+            && _.Count == _buyFactor.Count && _.Date == _buyFactor.Date 
+            && _.BuyPrice == _buyFactor.BuyPrice 
+            && _.SellerName == _buyFactor.SellerName);
+
+            expected.Should().Contain(_ => _.CommodityCode == _commodity.Code
+            && _.Count==_secondbuyFactor.Count && _.Date==_secondbuyFactor.Date
+            && _.BuyPrice == _secondbuyFactor.BuyPrice 
+            && _.SellerName == _secondbuyFactor.SellerName);
         }
 
         [Fact]
@@ -101,6 +115,7 @@ namespace StoreManage.Specs.EntryCommodity
             GivensecondAnd();
             When();
             Then();
+            ThenAnd();
         }
     }
 }

@@ -39,16 +39,18 @@ namespace StoreManage.Specs.Commodities
         private Commodity _commodity;
         private Commodity _existcommodity;
         Action expected;
-        public UpdateCommodityWithDuplicateName(ConfigurationFixture configuration) : base(configuration)
+        public UpdateCommodityWithDuplicateName(ConfigurationFixture configuration)
+            : base(configuration)
         {
             _dataContext = CreateDataContext();
             _unitOfWork = new EFUnitOfWork(_dataContext);
             _commodityrepository = new EFCommodityRepository(_dataContext);
             _categoryRepository = new EFCategoryRepository(_dataContext);
-            _sut = new CommodityAppService(_commodityrepository, _unitOfWork, _categoryRepository);
+            _sut = new CommodityAppService
+                (_commodityrepository, _unitOfWork, _categoryRepository);
         }
 
-        [Given("دسته بندی با عنوان 'لبنیات' در فهرست دسته بندی کالاها وجود دارد")]
+        [Given("دسته بندی با عنوان 'لبنیات' در فهرست دسته بندی های کالا وجود دارد")]
         public void Given()
         {
             _category = CategoryFactory.CreateCategory();
@@ -56,7 +58,7 @@ namespace StoreManage.Specs.Commodities
             _dataContext.Manipulate(_ => _.Categories.Add(_category));
         }
 
-        [Given("کالایی با نام 'شیر رامک' و قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد در دسته بندی با عنوان 'لبنیات' وجود دارد")]
+        [Given("کالایی با کد '1' و نام 'شیر رامک' و قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد در دسته بندی با عنوان 'لبنیات' وجود دارد")]
         public void GivenAnd()
         {
             _commodity = CommodityFactory.CreateCommodity(_category.Id);
@@ -64,22 +66,21 @@ namespace StoreManage.Specs.Commodities
             _dataContext.Manipulate(_ => _.Commodities.Add(_commodity));
         }
 
-        [Given("و : کالایی با نام 'شیر پر چرب رامک' و قیمت '170000' ریال و موجودی '9' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد در دسته بندی با عنوان 'لبنیات' وجود دارد")]
+        [Given(" کالایی با کد '2' و نام 'شیر پر چرب رامک' در دسته بندی با عنوان 'لبنیات' وجود دارد")]
         public void GivenAnd2()
         {
             _existcommodity = CommodityFactory.CreateCommodity(_category.Id);
             _existcommodity.Code = 2;
             _existcommodity.Name = "شیر پر چرب رامک";
-            _existcommodity.Price = "170000";
-            _existcommodity.Inventory = 9;
 
             _dataContext.Manipulate(_ => _.Commodities.Add(_existcommodity));
         }
 
-        [When("نام کالایی با نام 'شیر رامک' و قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' و کمترین موجودی '5' را ب  'شیر پر چرب رامک' تغییر میدم")]
+        [When("نام کالایی با کد '1' و نام 'شیر رامک' و قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' و کمترین موجودی '5' را ب  'شیر پر چرب رامک' تغییر میدهم")]
         public void When()
         {
-            _dto = UpdateCommodityDtoFactory.GenerateUpdateCommodityDto(_category.Id);
+            _dto = UpdateCommodityDtoFactory
+                .GenerateUpdateCommodityDto(_category.Id);
             _dto.Name = _existcommodity.Name;
 
             expected = () => _sut.Update(_commodity.Code, _dto);
@@ -88,14 +89,16 @@ namespace StoreManage.Specs.Commodities
         [Then("در فهرست کالاها تنها یک کالا باید با نام 'شیر پر چرب رامک ' در دسته بندی با عنوان 'لبنیات' وجود داشته باشد")]
         public void Then()
         {
-            _dataContext.Commodities.Where(_ => _.Name == _dto.Name && _.CategoryId == _category.Id && _.Code != _commodity.Code)
+            _dataContext.Commodities.Where(_ => _.Name == _dto.Name
+            && _.CategoryId == _category.Id && _.Code != _commodity.Code)
                 .Should().HaveCount(1);
         }
 
         [And("خطایی با عنوان 'نام کالا تکراریست ' باید رخ دهد")]
         public void ThenAnd()
         {
-            expected.Should().ThrowExactly<DuplicateCommodityNameInCategoryException>();
+            expected.Should()
+                .ThrowExactly<DuplicateCommodityNameInCategoryException>();
         }
 
         [Fact]

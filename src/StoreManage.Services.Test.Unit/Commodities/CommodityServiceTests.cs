@@ -37,7 +37,8 @@ namespace StoreManage.Services.Test.Unit.Commodities
             _unitOfWork = new EFUnitOfWork(_dataContext);
             _repository = new EFCommodityRepository(_dataContext);
             _categoryRepository = new EFCategoryRepository(_dataContext);
-            _sut = new CommodityAppService(_repository, _unitOfWork,_categoryRepository);
+            _sut = new CommodityAppService
+                (_repository, _unitOfWork,_categoryRepository);
         }
 
         [Fact]
@@ -46,7 +47,8 @@ namespace StoreManage.Services.Test.Unit.Commodities
             var category = CategoryFactory.CreateCategory();
             _dataContext.Manipulate(_ => _.Categories.Add(category));
 
-            AddCommodityDto dto = AddCommodityDtoFactory.GenerateAddCommodityDto(category.Id);
+            AddCommodityDto dto = AddCommodityDtoFactory
+                .GenerateAddCommodityDto(category.Id);
 
             _sut.Add(dto);
 
@@ -62,6 +64,42 @@ namespace StoreManage.Services.Test.Unit.Commodities
         }
 
         [Fact]
+        public void Add_throws_DuplicateCommodityCodeException_when_commodity_add_with_duplicate_code()
+        {
+            var category = CategoryFactory.CreateCategory();
+            _dataContext.Manipulate(_ => _.Categories.Add(category));
+
+            var existcommodity = CommodityFactory.CreateCommodity(category.Id);
+            _dataContext.Manipulate(_ => _.Commodities.Add(existcommodity));
+
+            AddCommodityDto dto = AddCommodityDtoFactory
+                .GenerateAddCommodityDto(category.Id);
+            dto.Code = existcommodity.Code;
+
+            Action expected = () => _sut.Add(dto);
+            expected.Should().ThrowExactly<DuplicateCommodityCodeException>();
+        }
+
+        [Fact]
+        public void Add_throws_DuplicateCommodityNameInCategoryException_when_commodity_add_with_duplicate_Name()
+        {
+            var category = CategoryFactory.CreateCategory();
+            _dataContext.Manipulate(_ => _.Categories.Add(category));
+
+            var existcommodity = CommodityFactory.CreateCommodity(category.Id);
+            _dataContext.Manipulate(_ => _.Commodities.Add(existcommodity));
+
+            AddCommodityDto dto = AddCommodityDtoFactory
+                .GenerateAddCommodityDto(category.Id);
+            dto.Name = existcommodity.Name;
+            dto.Code = 2;
+
+            Action expected = () => _sut.Add(dto);
+            expected.Should()
+                .ThrowExactly<DuplicateCommodityNameInCategoryException>();
+        }
+
+        [Fact]
         public void Update_update_commodity_properly()
         {
             var category = CategoryFactory.CreateCategory();
@@ -70,7 +108,8 @@ namespace StoreManage.Services.Test.Unit.Commodities
             var commodity = CommodityFactory.CreateCommodity(category.Id);
             _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
 
-            UpdateCommodityDto dto = UpdateCommodityDtoFactory.GenerateUpdateCommodityDto(category.Id);
+            UpdateCommodityDto dto = UpdateCommodityDtoFactory
+                .GenerateUpdateCommodityDto(category.Id);
             dto.Name = "ماست رامک";
             dto.Price = "170000";
 
@@ -98,11 +137,10 @@ namespace StoreManage.Services.Test.Unit.Commodities
             var existcommodity = CommodityFactory.CreateCommodity(category.Id);
             existcommodity.Code = 2;
             existcommodity.Name = "شیر پر چرب رامک";
-            existcommodity.Price = "170000";
-            existcommodity.Inventory = 9;
             _dataContext.Manipulate(_ => _.Commodities.Add(existcommodity));
 
-            UpdateCommodityDto dto = UpdateCommodityDtoFactory.GenerateUpdateCommodityDto(category.Id);
+            UpdateCommodityDto dto = UpdateCommodityDtoFactory
+                .GenerateUpdateCommodityDto(category.Id);
             dto.Name = existcommodity.Name;
 
             Action Expected = () => _sut.Update(commodity.Code, dto);
@@ -118,10 +156,8 @@ namespace StoreManage.Services.Test.Unit.Commodities
             var category = CategoryFactory.CreateCategory();
             _dataContext.Manipulate(_ => _.Categories.Add(category));
 
-            var commodity = CommodityFactory.CreateCommodity(category.Id);
-            _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
-
-            UpdateCommodityDto dto = UpdateCommodityDtoFactory.GenerateUpdateCommodityDto(category.Id);
+            UpdateCommodityDto dto = UpdateCommodityDtoFactory
+                .GenerateUpdateCommodityDto(category.Id);
 
             Action Expected = () => _sut.Update(fakecommodityCode, dto);
             Expected.Should().ThrowExactly<CommodityNotFoundException>();
@@ -156,14 +192,21 @@ namespace StoreManage.Services.Test.Unit.Commodities
             var category = CategoryFactory.CreateCategory();
             _dataContext.Manipulate(_ => _.Categories.Add(category));
 
-            var commodities = CommoditiesFactory.GenerateCommodities(category.Id);
+            var commodities = CommoditiesFactory
+                .GenerateCommodities(category.Id);
             _dataContext.Manipulate(_ => _.Commodities.AddRange(commodities));
 
             var expected = _sut.GetAll();
 
             expected.Should().HaveCount(2);
-            expected.Should().Contain(_ => _.Name == "شیر رامک" && _.Price == "150000" && _.Inventory == 10 && _.MaxInventory == "15" && _.MinInventory == "5" && _.CategoryId == category.Id);
-            expected.Should().Contain(_ => _.Name == "دوغ رامک" && _.Price == "120000" && _.Inventory == 15 && _.MaxInventory == "20" && _.MinInventory == "7" && _.CategoryId == category.Id);
+
+            expected.Should().Contain(_ => _.Name == "شیر رامک" 
+            && _.Price == "150000" && _.Inventory == 10 && _.MaxInventory=="15"
+            && _.MinInventory == "5" && _.CategoryId == category.Id);
+
+            expected.Should().Contain(_ => _.Name == "دوغ رامک" 
+            && _.Price == "120000" && _.Inventory == 15 && _.MaxInventory=="20"
+            && _.MinInventory == "7" && _.CategoryId == category.Id);
         }
 
         [Fact]

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StoreManage.Services.Categories.Contracts
+namespace StoreManage.Services.Commodities.Contracts
 {
-    public class CategoryIsAlreadyExistException : Exception
+    public class DuplicateCommodityCodeException : Exception
     {
     }
 }

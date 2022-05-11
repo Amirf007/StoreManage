@@ -36,15 +36,17 @@ namespace StoreManage.Specs.Commodities
         private GetCommodityDto expected;
         private Commodity _commodity;
         private Category _category;
-        public GetCommodity(ConfigurationFixture configuration) : base(configuration)
+        public GetCommodity(ConfigurationFixture configuration)
+            : base(configuration)
         {
             _dataContext = CreateDataContext();
             _unitOfWork = new EFUnitOfWork(_dataContext);
             _repository = new EFCommodityRepository(_dataContext);
-            _sut = new CommodityAppService(_repository, _unitOfWork, _categoryRepository);
+            _sut = new CommodityAppService
+                (_repository, _unitOfWork, _categoryRepository);
         }
 
-        [Given("دسته بندی با عنوان 'لبنیات'در فهرست دسته بندی کالاها وجود دارد")]
+        [Given("دسته بندی با عنوان 'لبنیات'در فهرست دسته بندی های کالا وجود دارد")]
         public void Given()
         {
             _category = CategoryFactory.CreateCategory();
@@ -52,7 +54,7 @@ namespace StoreManage.Specs.Commodities
             _dataContext.Manipulate(_ => _.Categories.Add(_category));
         }
 
-        [Given("کالایی با نام 'شیر رامک' با قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد در فهرست کالاها در دسته بندی با عنوان 'لبنیات' وجود دارد")]
+        [Given("کالایی با کد '1' و نام 'شیر رامک' با قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد در فهرست کالاها در دسته بندی با عنوان 'لبنیات' وجود دارد")]
         public void GivenAnd()
         {
             _commodity = CommodityFactory.CreateCommodity(_category.Id);
@@ -66,7 +68,7 @@ namespace StoreManage.Specs.Commodities
             expected = _sut.GetCommodity(_commodity.Code);
         }
 
-        [Then("کالایی با نام 'شیر رامک' و قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد در  دسته بندی کالا با عنوان 'لبنیات' باید وجود داشته باشد")]
+        [Then("کالایی با کد '1' و نام 'شیر رامک' و قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد در  دسته بندی کالا با عنوان 'لبنیات' باید وجود داشته باشد")]
         public void Then()
         {
             var expected = _dataContext.Commodities.FirstOrDefault();

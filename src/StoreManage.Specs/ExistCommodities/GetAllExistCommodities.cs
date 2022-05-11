@@ -22,7 +22,7 @@ using static StoreManage.Specs.BDDHelper;
 
 namespace StoreManage.Specs.ExistCommodities
 {
-    [Scenario("مشاهده فهرست خروجی های کالا")]
+    [Scenario("مشاهده فهرست خروجی های کالا ")]
     [Feature("",
        AsA = "فروشنده ",
        IWantTo = " خروج کالاها را مدیریت کنم ",
@@ -40,16 +40,18 @@ namespace StoreManage.Specs.ExistCommodities
         private Category _category;
         private Commodity _commodity;
         private IList<GetSellFactorDto> expected;
-        public GetAllExistCommodities(ConfigurationFixture configuration) : base(configuration)
+        public GetAllExistCommodities(ConfigurationFixture configuration)
+            : base(configuration)
         {
             _dataContext = CreateDataContext();
             _unitOfWork = new EFUnitOfWork(_dataContext);
             _sellfactorrepository = new EFSellFactorRepository(_dataContext);
             _commodityRepository = new EFCommodityRepository(_dataContext);
-            _sut = new SellFactorAppService(_sellfactorrepository, _unitOfWork, _commodityRepository);
+            _sut = new SellFactorAppService
+                (_sellfactorrepository, _unitOfWork, _commodityRepository);
         }
 
-        [Given("دسته بندی با عنوان 'لبنیات' در فهرست دسته بندی کالاها وجود دارد")]
+        [Given("دسته بندی با عنوان 'لبنیات' در فهرست دسته بندی های کالا وجود دارد")]
         public void Given()
         {
             _category = CategoryFactory.CreateCategory();
@@ -68,10 +70,11 @@ namespace StoreManage.Specs.ExistCommodities
         [Given("سند های خروج کالایی با کد '1' و تعداد '3' و '1' عدد و قیمت پایه '150000' و قیمت کل '450000' و '150000' در تاریخ '2022/05/08' در فهرست سند های خروج کالا وجود دارند")]
         public void GivensecondAnd()
         {
-            _sellFactor = SellFactorFactory.GenerateSellFactor(_commodity.Code);
+            _sellFactor=SellFactorFactory.GenerateSellFactor(_commodity.Code);
             _dataContext.Manipulate(_ => _.SellFactors.Add(_sellFactor));
 
-            _secondsellFactor = SellFactorFactory.GenerateSellFactor(_commodity.Code);
+            _secondsellFactor = SellFactorFactory
+                .GenerateSellFactor(_commodity.Code);
             _secondsellFactor.Count = 1;
             _secondsellFactor.TotalPrice = "150000";
             _dataContext.Manipulate(_ => _.SellFactors.Add(_secondsellFactor));
@@ -79,18 +82,33 @@ namespace StoreManage.Specs.ExistCommodities
             _commodity.Inventory -= _sellFactor.Count + _secondsellFactor.Count;
         }
 
-        [When("درخواست نمایش فهرست سند های ورود کالا را میدهم")]
+        [When("درخواست نمایش فهرست سند های خروج کالا را میدهم")]
         public void When()
         {
             expected = _sut.GetAll();
         }
 
-        [Then("سند های خروج کالایی با کد '1' و تعداد '3' و '1' عدد و قیمت پایه '150000' و قیمت کل '450000' و '150000' در تاریخ '2022/05/08' در فهرست سند های خروج کالا باید وجود داشته باشند ")]
+        [Then("فهرست خروجی های کالا ی موجود باید شامل 3 خروج کالا باشد ")]
         public void Then()
         {
             expected.Should().HaveCount(2);
-            expected.Should().Contain(_ => _.CommodityCode == _commodity.Code && _.Count == _sellFactor.Count && _.Date == _sellFactor.Date && _.BasePrice == _sellFactor.BasePrice && _.TotalPrice == _sellFactor.TotalPrice && _.BuyerName == _sellFactor.BuyerName);
-            expected.Should().Contain(_ => _.CommodityCode == _commodity.Code && _.Count == _secondsellFactor.Count && _.Date == _secondsellFactor.Date && _.BasePrice == _secondsellFactor.BasePrice && _.TotalPrice == _secondsellFactor.TotalPrice && _.BuyerName == _secondsellFactor.BuyerName);
+        }
+
+        [Then("سند های خروج کالایی با کد '1' و تعداد '3' و '1' عدد و قیمت پایه '150000' و قیمت کل '450000' و '150000' در تاریخ '2022/05/08' در فهرست سند های خروج کالا باید وجود داشته باشند ")]
+        public void ThenAnd()
+        {
+            expected.Should().Contain(_ => _.CommodityCode == _commodity.Code 
+            && _.Count == _sellFactor.Count && _.Date == _sellFactor.Date
+            && _.BasePrice == _sellFactor.BasePrice
+            && _.TotalPrice == _sellFactor.TotalPrice 
+            && _.BuyerName == _sellFactor.BuyerName);
+
+            expected.Should().Contain(_ => _.CommodityCode == _commodity.Code
+            && _.Count == _secondsellFactor.Count 
+            && _.Date == _secondsellFactor.Date
+            && _.BasePrice == _secondsellFactor.BasePrice
+            && _.TotalPrice == _secondsellFactor.TotalPrice
+            && _.BuyerName == _secondsellFactor.BuyerName);
         }
 
         [Fact]
@@ -101,6 +119,7 @@ namespace StoreManage.Specs.ExistCommodities
             GivensecondAnd();
             When();
             Then();
+            ThenAnd();
         }
     }
 }

@@ -37,16 +37,18 @@ namespace StoreManage.Specs.Commodities
         private UpdateCommodityDto _dto;
         private Category _category;
         private Commodity _commodity;
-        public UpdateCommodity(ConfigurationFixture configuration) : base(configuration)
+        public UpdateCommodity(ConfigurationFixture configuration)
+            : base(configuration)
         {
             _dataContext = CreateDataContext();
             _unitOfWork = new EFUnitOfWork(_dataContext);
             _commodityrepository = new EFCommodityRepository(_dataContext);
             _categoryRepository = new EFCategoryRepository(_dataContext);
-            _sut = new CommodityAppService(_commodityrepository, _unitOfWork, _categoryRepository);
+            _sut = new CommodityAppService
+                (_commodityrepository, _unitOfWork, _categoryRepository);
         }
 
-        [Given("دسته بندی با عنوان 'لبنیات'در فهرست دسته بندی کالاها وجود دارد")]
+        [Given("دسته بندی با عنوان 'لبنیات'در فهرست دسته بندی های کالا وجود دارد")]
         public void Given()
         {
             _category = CategoryFactory.CreateCategory();
@@ -54,7 +56,7 @@ namespace StoreManage.Specs.Commodities
             _dataContext.Manipulate(_ => _.Categories.Add(_category));
         }
 
-        [Given("کالایی با نام 'شیر رامک' و قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد در دسته بندی با عنوان 'لبنیات' وجود دارد")]
+        [Given("کالایی با کد '1' و نام 'شیر رامک' و قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد در دسته بندی با عنوان 'لبنیات' وجود دارد")]
         public void GivenAnd()
         {
             _commodity = CommodityFactory.CreateCommodity(_category.Id);
@@ -62,15 +64,16 @@ namespace StoreManage.Specs.Commodities
             _dataContext.Manipulate(_ => _.Commodities.Add(_commodity));
         }
 
-        [When("قیمت کالایی با نام 'شیر رامک' و قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد را ب  '170000' تغییر میدیم")]
+        [When("قیمت کالایی با کد '1' و نام 'شیر رامک' و قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد را ب  '170000' تغییر میدهم")]
         public void When()
         {
-            _dto = UpdateCommodityDtoFactory.GenerateUpdateCommodityDto(_category.Id);
+            _dto = UpdateCommodityDtoFactory
+                .GenerateUpdateCommodityDto(_category.Id);
 
             _sut.Update(_commodity.Code, _dto);
         }
 
-        [Then("در فهرست کالا ها کالایی با نام'شیر رامک' و قیمت '170000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد در دسته بندی با عنوان 'لبنیات' باید وجود داشته باشد")]
+        [Then("در فهرست کالا ها کالایی با کد '1' و نام'شیر رامک' و قیمت '170000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد در دسته بندی با عنوان 'لبنیات' باید وجود داشته باشد")]
         public void Then()
         {
             var expected = _dataContext.Commodities.FirstOrDefault();

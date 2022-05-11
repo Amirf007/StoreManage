@@ -21,7 +21,7 @@ using static StoreManage.Specs.BDDHelper;
 
 namespace StoreManage.Specs.Commodities
 {
-    [Scenario("تعریف کالا با عنوان تکرای در یک دسته بندی")]
+    [Scenario("تعریف کالا با نام تکرای در یک دسته بندی")]
     [Feature("",
         AsA = "فروشنده ",
         IWantTo = " کالاها را مدیریت کنم ",
@@ -38,7 +38,8 @@ namespace StoreManage.Specs.Commodities
         private Category _category;
         private Commodity _commodity;
         Action expected;
-        public AddCommodityWithDuplicateName(ConfigurationFixture configuration) : base(configuration)
+        public AddCommodityWithDuplicateName(ConfigurationFixture configuration)
+            : base(configuration)
         {
             _dataContext = CreateDataContext();
             _unitOfWork = new EFUnitOfWork(_dataContext);
@@ -63,11 +64,12 @@ namespace StoreManage.Specs.Commodities
             _dataContext.Manipulate(_ => _.Commodities.Add(_commodity));
         }
 
-        [When("کالایی با نام 'شیر رامک' و قیمت '200000' ریال و موجودی '10' عدد و بیشترین موجودی '15' و کمترین موجودی '5' تعریف میکنم")]
+        [When("کالایی با کد '2' و نام 'شیر رامک' و موجودی '10' عدد و بیشترین موجودی '15' و کمترین موجودی '5' تعریف میکنم")]
         public void When()
         {
             _dto = AddCommodityDtoFactory.GenerateAddCommodityDto(_category.Id);
-            _dto.Price = "200000";
+            _dto.Name = _commodity.Name;
+            _dto.Code = 2;
 
             expected = () => _sut.Add(_dto);
         }
@@ -75,14 +77,15 @@ namespace StoreManage.Specs.Commodities
         [Then("تنها یک کالا با نام' شیر رامک ' باید در دسته بندی با عنوان 'لبنیات' وجود داشته باشد")]
         public void Then()
         {
-            _dataContext.Commodities.Where(_ => _.Name == _dto.Name && _.CategoryId==_category.Id)
-                .Should().HaveCount(1);
+            _dataContext.Commodities.Where(_ => _.Name == _dto.Name 
+            && _.CategoryId==_category.Id).Should().HaveCount(1);
         }
 
         [And("خطایی با عنوان 'نام کالا تکراریست ' باید رخ دهد")]
         public void ThenAnd()
         {
-            expected.Should().ThrowExactly<DuplicateCommodityNameInCategoryException>();
+            expected.Should()
+                .ThrowExactly<DuplicateCommodityNameInCategoryException>();
         }
 
         [Fact]

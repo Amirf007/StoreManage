@@ -35,7 +35,8 @@ namespace StoreManage.Services.Test.Unit.BuyFactors
             _unitOfWork = new EFUnitOfWork(_dataContext);
             _repository = new EFBuyFactorRepository(_dataContext);
             _commodityRepository = new EFCommodityRepository(_dataContext);
-            _sut = new BuyFactorAppService(_repository, _unitOfWork, _commodityRepository);
+            _sut = new BuyFactorAppService
+                (_repository, _unitOfWork, _commodityRepository);
         }
 
         [Fact]
@@ -48,7 +49,8 @@ namespace StoreManage.Services.Test.Unit.BuyFactors
             _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
             var initialbalance = commodity.Inventory;
 
-            AddBuyFactorDto dto = AddBuyFactorDtoFactory.GenerateAddBuyFactorDto(commodity.Code);
+            AddBuyFactorDto dto = AddBuyFactorDtoFactory
+                .GenerateAddBuyFactorDto(commodity.Code);
 
             _sut.Add(dto);
 
@@ -67,7 +69,8 @@ namespace StoreManage.Services.Test.Unit.BuyFactors
             var commodity = CommodityFactory.CreateCommodity(category.Id);
             _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
 
-            AddBuyFactorDto dto = AddBuyFactorDtoFactory.GenerateAddBuyFactorDto(commodity.Code);
+            AddBuyFactorDto dto = AddBuyFactorDtoFactory
+                .GenerateAddBuyFactorDto(commodity.Code);
 
             _sut.Add(dto);
 
@@ -92,7 +95,8 @@ namespace StoreManage.Services.Test.Unit.BuyFactors
             _dataContext.Manipulate(_ => _.BuyFactors.Add(buyFactor));
             commodity.Inventory += buyFactor.Count;
 
-            var dto = UpdateBuyFactorDtoFactory.GenerateUpdateBuyFactorDto(commodity.Code);
+            var dto = UpdateBuyFactorDtoFactory
+                .GenerateUpdateBuyFactorDto(commodity.Code);
 
             _sut.Update(buyFactor.BuyFactorNumber, dto);
 
@@ -114,7 +118,8 @@ namespace StoreManage.Services.Test.Unit.BuyFactors
             var buyFactor = BuyFactorFactory.GenerateBuyFactor(commodity.Code);
             _dataContext.Manipulate(_ => _.BuyFactors.Add(buyFactor));
 
-            var dto = UpdateBuyFactorDtoFactory.GenerateUpdateBuyFactorDto(commodity.Code);
+            var dto = UpdateBuyFactorDtoFactory
+                .GenerateUpdateBuyFactorDto(commodity.Code);
 
             _sut.Update(buyFactor.BuyFactorNumber, dto);
 
@@ -137,7 +142,8 @@ namespace StoreManage.Services.Test.Unit.BuyFactors
             var commodity = CommodityFactory.CreateCommodity(category.Id);
             _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
 
-            var dto = UpdateBuyFactorDtoFactory.GenerateUpdateBuyFactorDto(commodity.Code);
+            var dto = UpdateBuyFactorDtoFactory
+                .GenerateUpdateBuyFactorDto(commodity.Code);
 
             Action Expected = () => _sut.Update(fakebuyfactornumber, dto);
             Expected.Should().ThrowExactly<BuyFactorNotFoundException>();
@@ -210,7 +216,8 @@ namespace StoreManage.Services.Test.Unit.BuyFactors
             var buyFactor = BuyFactorFactory.GenerateBuyFactor(commodity.Code);
             _dataContext.Manipulate(_ => _.BuyFactors.Add(buyFactor));
 
-            var secondbuyFactor = BuyFactorFactory.GenerateBuyFactor(commodity.Code);
+            var secondbuyFactor = BuyFactorFactory
+                .GenerateBuyFactor(commodity.Code);
             secondbuyFactor.Count = 1;
             secondbuyFactor.BuyPrice = "130000";
             _dataContext.Manipulate(_ => _.BuyFactors.Add(secondbuyFactor));
@@ -219,9 +226,17 @@ namespace StoreManage.Services.Test.Unit.BuyFactors
 
             var expected = _sut.GetAll();
 
-            _dataContext.BuyFactors.Should().HaveCount(2);
-            _dataContext.BuyFactors.Should().Contain(_ => _.CommodityCode==commodity.Code && _.Count==buyFactor.Count && _.Date==buyFactor.Date && _.BuyPrice==buyFactor.BuyPrice && _.SellerName==buyFactor.SellerName);
-            _dataContext.BuyFactors.Should().Contain(_ => _.CommodityCode == commodity.Code && _.Count == secondbuyFactor.Count && _.Date == secondbuyFactor.Date && _.BuyPrice == secondbuyFactor.BuyPrice && _.SellerName == secondbuyFactor.SellerName);
+            expected.Should().HaveCount(2);
+
+            expected.Should().Contain(_ => _.CommodityCode==commodity.Code 
+            && _.Count==buyFactor.Count && _.Date==buyFactor.Date 
+            && _.BuyPrice==buyFactor.BuyPrice 
+            && _.SellerName==buyFactor.SellerName);
+
+            expected.Should().Contain(_ => _.CommodityCode == commodity.Code
+            && _.Count == secondbuyFactor.Count && _.Date == secondbuyFactor.Date
+            && _.BuyPrice == secondbuyFactor.BuyPrice 
+            && _.SellerName == secondbuyFactor.SellerName);
         }
        
         [Fact]

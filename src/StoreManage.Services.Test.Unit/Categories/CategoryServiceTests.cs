@@ -36,10 +36,7 @@ namespace StoreManage.Services.Test.Unit.Categories
         [Fact]
         public void Add_adds_category_properly()
         {
-            var dto = new AddCategoryDto
-            {
-                Title = "لبنیات"
-            };
+            var dto = AddCategoryDtoFactory.GenerateAddCategoryDto();
 
             _sut.Add(dto);
 
@@ -49,19 +46,15 @@ namespace StoreManage.Services.Test.Unit.Categories
         }
 
         [Fact]
-        public void Add_throws_CategoryIsAlreadyExistException_when_category_register_with_duplicate_Title()
+        public void Add_throws_CategoryIsAlreadyExistException_when_category_add_with_duplicate_Title()
         {
             var category = CategoryFactory.CreateCategory();
             _dataContext.Manipulate(_ => _.Categories.Add(category));
 
-            var dto = new AddCategoryDto
-            {
-                Title = category.Title
-            };
+            var dto = AddCategoryDtoFactory.GenerateAddCategoryDto();
 
             Action expected = () => _sut.Add(dto);
-
-            expected.Should().ThrowExactly<CategoryIsAlreadyExistException>();
+            expected.Should().ThrowExactly<DuplicateCategoryTitleException>();
         }
 
         [Fact]
@@ -70,10 +63,8 @@ namespace StoreManage.Services.Test.Unit.Categories
             var category = CategoryFactory.CreateCategory();
             _dataContext.Manipulate(_ => _.Categories.Add(category));
 
-            UpdateCategoryDto dto = new UpdateCategoryDto
-            {
-                Title = "شیر و ماست"
-            };
+            UpdateCategoryDto dto = UpdateCategoryDtoFactory
+                .GenerateUpdateCategoryDto("شیر و ماست");
 
             _sut.Update(category.Id, dto);
 
@@ -87,30 +78,29 @@ namespace StoreManage.Services.Test.Unit.Categories
         {
             var fakeCategoryId = 100;
 
-            UpdateCategoryDto dto = new UpdateCategoryDto
-            {
-                Title = "شیر و ماست"
-            };
+            UpdateCategoryDto dto = UpdateCategoryDtoFactory
+                .GenerateUpdateCategoryDto("شیر و ماست");
 
             Action Expected = () => _sut.Update(fakeCategoryId, dto);
             Expected.Should().ThrowExactly<CategoryNotFoundException>();
         }
 
         [Fact]
-        public void Update_throw_CategoryIsAlreadyExistException_When_category_update_with_duplicate_Title()
+        public void Update_throw_DuplicateCategoryTitleException_When_category_update_with_duplicate_Title()
         {
             var category = CategoryFactory.CreateCategory();
             _dataContext.Manipulate(_ => _.Categories.Add(category));
 
-            UpdateCategoryDto dto = new UpdateCategoryDto
-            {
-                Title = "شیر و ماست"
-            };
-            dto.Title = category.Title;
+            var existcategory = CategoryFactory.CreateCategory();
+            existcategory.Title = "شیر و ماست";
+            _dataContext.Manipulate(_ => _.Categories.Add(existcategory));
+
+            UpdateCategoryDto dto = UpdateCategoryDtoFactory
+                .GenerateUpdateCategoryDto(existcategory.Title);
 
             Action Expected = () => _sut.Update(category.Id,dto);
             Expected.Should()
-                .ThrowExactly<CategoryIsAlreadyExistException>();
+                .ThrowExactly<DuplicateCategoryTitleException>();
         }
 
         [Fact]

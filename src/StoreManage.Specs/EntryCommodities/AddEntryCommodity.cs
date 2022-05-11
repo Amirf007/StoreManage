@@ -22,7 +22,7 @@ using static StoreManage.Specs.BDDHelper;
 
 namespace StoreManage.Specs.EntryCommodity
 {
-    [Scenario("تعریف ورود کالا ")]
+    [Scenario(" تعریف ورود کالا ")]
     [Feature("",
         AsA = "فروشنده ",
         IWantTo = " ورود کالاها را مدیریت کنم ",
@@ -39,16 +39,18 @@ namespace StoreManage.Specs.EntryCommodity
         private Category _category;
         private Commodity _commodity;
         private int _initialbalance;
-        public AddEntryCommodity(ConfigurationFixture configuration) : base(configuration)
+        public AddEntryCommodity(ConfigurationFixture configuration)
+            : base(configuration)
         {
             _dataContext = CreateDataContext();
             _unitOfWork = new EFUnitOfWork(_dataContext);
             _buyfactorrepository = new EFBuyFactorRepository(_dataContext);
             _commodityRepository = new EFCommodityRepository(_dataContext);
-            _sut = new BuyFactorAppService(_buyfactorrepository, _unitOfWork , _commodityRepository);
+            _sut = new BuyFactorAppService
+                (_buyfactorrepository, _unitOfWork , _commodityRepository);
         }
 
-        [Given("دسته بندی با عنوان 'لبنیات' در فهرست دسته بندی کالاها وجود دارد")]
+        [Given("دسته بندی با عنوان 'لبنیات' در فهرست دسته بندی های کالا وجود دارد")]
         public void Given()
         {
             _category = CategoryFactory.CreateCategory();
@@ -56,7 +58,7 @@ namespace StoreManage.Specs.EntryCommodity
             _dataContext.Manipulate(_ => _.Categories.Add(_category));
         }
 
-        [Given("کالایی با نام 'شیر رامک' و کد '1' با قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد در فهرست کالاها در دسته بندی با عنوان 'لبنیات' وجود دارد")]
+        [Given("کالایی با کد '1' و نام 'شیر رامک' و کد '1' با قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' عدد و کمترین موجودی '5' عدد در فهرست کالاها در دسته بندی با عنوان 'لبنیات' وجود دارد")]
         public void GivenAnd()
         {
             _commodity = CommodityFactory.CreateCommodity(_category.Id);
@@ -65,21 +67,22 @@ namespace StoreManage.Specs.EntryCommodity
             _initialbalance = _commodity.Inventory;
         }
 
-        [Given("هیچ سند ورود کالایی در فهرست سند ورودی کالا وجود ندارد")]
-        public void GivenAnd2()
+        [Given("هیچ سند ورود کالایی در فهرست سند های ورودی کالا وجود ندارد")]
+        public void GivenSecondAnd()
         {
             
         }
 
-        [When("کالایی با کد '1' با تعداد '4' و قیمت خرید '125000' در تاریخ '19 / 02 / 1400'  وارد میکنم")]
+        [When("کالایی با کد '1' و تعداد '4' و قیمت خرید '125000' در تاریخ '2022/05/08'  وارد میکنم")]
         public void When()
         {
-            _dto = AddBuyFactorDtoFactory.GenerateAddBuyFactorDto(_commodity.Code);
+            _dto = AddBuyFactorDtoFactory
+                .GenerateAddBuyFactorDto(_commodity.Code);
 
             _sut.Add(_dto);
         }
 
-        [Then("سند ورود کالایی با کد '1' با تعداد '4' در تاریخ '21 / 02 / 1400' در فهرست سند ورودی کالا باید وجود داشته باشد")]
+        [Then("سند ورود کالایی با کد '1' با تعداد '4' در تاریخ '2022/05/08' در فهرست سند های ورودی کالا باید وجود داشته باشد")]
         public void Then()
         {
             var expected = _dataContext.BuyFactors.FirstOrDefault();
@@ -105,7 +108,7 @@ namespace StoreManage.Specs.EntryCommodity
         {
             Given();
             GivenAnd();
-            GivenAnd2();
+            GivenSecondAnd();
             When();
             Then();
             ThenAnd();

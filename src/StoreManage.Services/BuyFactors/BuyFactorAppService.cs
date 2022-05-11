@@ -16,7 +16,9 @@ namespace StoreManage.Services.BuyFactors
         private UnitOfWork _unitOfWork;
         private CommodityRepository _commodityRepository;
 
-        public BuyFactorAppService(BuyFactorRepository buyfactorrepository, UnitOfWork unitOfWork , CommodityRepository commodityRepository)
+        public BuyFactorAppService
+            (BuyFactorRepository buyfactorrepository
+            , UnitOfWork unitOfWork , CommodityRepository commodityRepository)
         {
             _repository = buyfactorrepository;
             _unitOfWork = unitOfWork;
@@ -36,7 +38,8 @@ namespace StoreManage.Services.BuyFactors
 
             _repository.Add(buyfactor);
 
-            Commodity commodity = _commodityRepository.GetbyId(buyfactor.CommodityCode);
+            Commodity commodity = _commodityRepository
+                .GetbyCode(buyfactor.CommodityCode);
             commodity.Inventory += buyfactor.Count;
 
             _unitOfWork.Commit();
@@ -45,6 +48,7 @@ namespace StoreManage.Services.BuyFactors
         public void Delete(int buyFactorNumber)
         {
             var buyfactor = _repository.GetbyFactorNumber(buyFactorNumber);
+
             if (buyfactor == null)
             {
                 throw new BuyFactorNotFoundException();
@@ -52,7 +56,8 @@ namespace StoreManage.Services.BuyFactors
 
             _repository.Remove(buyfactor);
 
-            var commodity = _commodityRepository.GetbyId(buyfactor.CommodityCode);
+            var commodity = _commodityRepository
+                .GetbyCode(buyfactor.CommodityCode);
             commodity.Inventory -= buyfactor.Count;
 
             _unitOfWork.Commit();
@@ -66,6 +71,7 @@ namespace StoreManage.Services.BuyFactors
         public GetBuyFactorDto GetBuyFactor(int buyFactorNumber)
         {
             var buyfactor = _repository.GetBuyFactor(buyFactorNumber);
+
             if (buyfactor == null)
             {
                 throw new BuyFactorNotFoundException();
@@ -77,12 +83,14 @@ namespace StoreManage.Services.BuyFactors
         public void Update(int buyFactorNumber, UpdateBuyFactorDto dto)
         {
             var buyfactor = _repository.GetbyFactorNumber(buyFactorNumber);
+
             if (buyfactor == null)
             {
                 throw new BuyFactorNotFoundException();
             }
 
-            var commodity = _commodityRepository.GetbyId(buyfactor.CommodityCode);
+            var commodity = _commodityRepository
+                .GetbyCode(buyfactor.CommodityCode);
             commodity.Inventory += (dto.Count - buyfactor.Count);
 
             buyfactor.CommodityCode = dto.CommodityCode;

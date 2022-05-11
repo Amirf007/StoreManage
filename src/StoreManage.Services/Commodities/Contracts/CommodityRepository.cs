@@ -12,10 +12,11 @@ namespace StoreManage.Services.Commodities.Contracts
     {
         void Add(Commodity commodity);
         bool IsExistNameCommodity(string name, int CategoryId);
-        Commodity GetbyId(int code);
+        Commodity GetbyCode(int code);
         bool IsExistName(string name,int CategoryId, int code);
         void Remove(Commodity commodity);
         IList<GetCommodityDto> GetAll();
         GetCommodityDto GetCommodity(int code);
+        bool IsExistCodeCommodity(int code);
     }
 }

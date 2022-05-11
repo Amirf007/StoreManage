@@ -38,14 +38,16 @@ namespace StoreManage.Persistence.EF.Commodities
                   }).ToList();
         }
 
-        public Commodity GetbyId(int code)
+        public Commodity GetbyCode(int code)
         {
             return _dataContext.Commodities.Find(code);
         }
 
         public GetCommodityDto GetCommodity(int code)
         {
-            return _dataContext.Commodities.Where(_ => _.Code == code).Select(_ => new GetCommodityDto
+            return _dataContext.Commodities
+                .Where(_ => _.Code == code)
+            .Select(_ => new GetCommodityDto
             {
                 Name = _.Name,
                 Price = _.Price,
@@ -57,6 +59,12 @@ namespace StoreManage.Persistence.EF.Commodities
             }).SingleOrDefault();
         }
 
+        public bool IsExistCodeCommodity(int code)
+        {
+            return _dataContext.Commodities
+               .Any(_ => _.Code == code);
+        }
+
         public bool IsExistName(string name,int CategoryId, int code)
         {
             return _dataContext.Commodities
@@ -66,7 +74,8 @@ namespace StoreManage.Persistence.EF.Commodities
 
         public bool IsExistNameCommodity(string name,int CategoryId)
         {
-            return _dataContext.Commodities.Any(_ => _.Name==name && _.CategoryId == CategoryId);
+            return _dataContext.Commodities
+                .Any(_ => _.Name==name && _.CategoryId == CategoryId);
         }
 
         public void Remove(Commodity commodity)

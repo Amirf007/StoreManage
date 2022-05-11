@@ -14,7 +14,8 @@ namespace StoreManage.Services.Categories
         private CategoryRepository _repository;
         private UnitOfWork _unitOfWork;
 
-        public CategoryAppService(CategoryRepository repository, UnitOfWork unitOfWork)
+        public CategoryAppService
+            (CategoryRepository repository, UnitOfWork unitOfWork)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
@@ -26,7 +27,7 @@ namespace StoreManage.Services.Categories
 
             if (isTitleDuplicate)
             {
-                throw new CategoryIsAlreadyExistException();
+                throw new DuplicateCategoryTitleException();
             }
 
             var category = new Category
@@ -41,6 +42,7 @@ namespace StoreManage.Services.Categories
         public void Delete(int id)
         {
             var category = _repository.GetbyId(id);
+
             if (category==null)
             {
                 throw new CategoryNotFoundException();
@@ -59,6 +61,7 @@ namespace StoreManage.Services.Categories
         public void Update(int id, UpdateCategoryDto dto)
         {
             Category category = _repository.GetbyId(id);
+
             if (category==null)
             {
                 throw new CategoryNotFoundException();
@@ -68,7 +71,7 @@ namespace StoreManage.Services.Categories
                 .IsExistCategoryTitle(dto.Title);
             if (IsExistCategory)
             {
-                throw new CategoryIsAlreadyExistException();
+                throw new DuplicateCategoryTitleException();
             }
 
             category.Title = dto.Title;

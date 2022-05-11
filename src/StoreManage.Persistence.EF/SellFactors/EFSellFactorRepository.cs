@@ -27,7 +27,6 @@ namespace StoreManage.Persistence.EF.SellFactors
             return _dataContext.SellFactors
                  .Select(_ => new GetSellFactorDto
                  {
-
                      CommodityCode = _.CommodityCode,
                      Date = _.Date,
                      Count = _.Count,
@@ -45,7 +44,9 @@ namespace StoreManage.Persistence.EF.SellFactors
 
         public GetSellFactorDto GetSellFactor(int sellFactorNumber)
         {
-            return _dataContext.SellFactors.Where(_ => _.SellFactorNumber == sellFactorNumber).Select(_ => new GetSellFactorDto
+            return _dataContext.SellFactors
+                .Where(_ => _.SellFactorNumber == sellFactorNumber)
+            .Select(_ => new GetSellFactorDto
             {
                 CommodityCode = _.CommodityCode,
                 Date = _.Date,

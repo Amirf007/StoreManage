@@ -35,7 +35,8 @@ namespace StoreManage.Services.Test.Unit.SellFactors
             _unitOfWork = new EFUnitOfWork(_dataContext);
             _repository = new EFSellFactorRepository(_dataContext);
             _commodityRepository = new EFCommodityRepository(_dataContext);
-            _sut = new SellFactorAppService(_repository, _unitOfWork, _commodityRepository);
+            _sut = new SellFactorAppService
+                (_repository, _unitOfWork, _commodityRepository);
         }
 
         [Fact]
@@ -47,7 +48,8 @@ namespace StoreManage.Services.Test.Unit.SellFactors
             var commodity = CommodityFactory.CreateCommodity(category.Id);
             _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
 
-            var dto = AddSellFactorDtoFactory.GenerateAddSellFactorDto(commodity.Code);
+            var dto = AddSellFactorDtoFactory
+                .GenerateAddSellFactorDto(commodity.Code);
 
             _sut.Add(dto);
 
@@ -70,7 +72,8 @@ namespace StoreManage.Services.Test.Unit.SellFactors
             _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
             var initialbalance = commodity.Inventory;
 
-            var dto = AddSellFactorDtoFactory.GenerateAddSellFactorDto(commodity.Code);
+            var dto = AddSellFactorDtoFactory
+                .GenerateAddSellFactorDto(commodity.Code);
 
             _sut.Add(dto);
 
@@ -90,11 +93,12 @@ namespace StoreManage.Services.Test.Unit.SellFactors
             _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
             var initialbalance = commodity.Inventory;
 
-            var sellFactor = SellFactorFactory.GenerateSellFactor(commodity.Code);
+            var sellFactor=SellFactorFactory.GenerateSellFactor(commodity.Code);
             _dataContext.Manipulate(_ => _.SellFactors.Add(sellFactor));
             commodity.Inventory -= sellFactor.Count;
 
-            var dto = UpdateSellFactorDtoFactory.GenerateUpdateSellFactorDto(commodity.Code);
+            var dto = UpdateSellFactorDtoFactory
+                .GenerateUpdateSellFactorDto(commodity.Code);
 
             _sut.Update(sellFactor.SellFactorNumber, dto);
 
@@ -113,11 +117,12 @@ namespace StoreManage.Services.Test.Unit.SellFactors
             var commodity = CommodityFactory.CreateCommodity(category.Id);
             _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
 
-            var sellFactor = SellFactorFactory.GenerateSellFactor(commodity.Code);
+            var sellFactor=SellFactorFactory.GenerateSellFactor(commodity.Code);
             _dataContext.Manipulate(_ => _.SellFactors.Add(sellFactor));
             commodity.Inventory -= sellFactor.Count;
 
-            var dto = UpdateSellFactorDtoFactory.GenerateUpdateSellFactorDto(commodity.Code);
+            var dto = UpdateSellFactorDtoFactory
+                .GenerateUpdateSellFactorDto(commodity.Code);
 
             _sut.Update(sellFactor.SellFactorNumber, dto);
 
@@ -141,7 +146,8 @@ namespace StoreManage.Services.Test.Unit.SellFactors
             var commodity = CommodityFactory.CreateCommodity(category.Id);
             _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
 
-            var dto = UpdateSellFactorDtoFactory.GenerateUpdateSellFactorDto(commodity.Code);
+            var dto = UpdateSellFactorDtoFactory
+                .GenerateUpdateSellFactorDto(commodity.Code);
 
             Action Expected = () => _sut.Update(fakesellfactornumber, dto);
             Expected.Should().ThrowExactly<SellFactorNotFoundException>();
@@ -156,7 +162,7 @@ namespace StoreManage.Services.Test.Unit.SellFactors
             var commodity = CommodityFactory.CreateCommodity(category.Id);
             _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
 
-            var sellfactor = SellFactorFactory.GenerateSellFactor(commodity.Code);
+            var sellfactor=SellFactorFactory.GenerateSellFactor(commodity.Code);
             _dataContext.Manipulate(_ => _.SellFactors.Add(sellfactor));
             commodity.Inventory -= sellfactor.Count;
 
@@ -190,7 +196,7 @@ namespace StoreManage.Services.Test.Unit.SellFactors
             _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
             var initialbalance = commodity.Inventory;
 
-            var sellfactor = SellFactorFactory.GenerateSellFactor(commodity.Code);
+            var sellfactor=SellFactorFactory.GenerateSellFactor(commodity.Code);
             _dataContext.Manipulate(_ => _.SellFactors.Add(sellfactor));
             commodity.Inventory -= sellfactor.Count;
 
@@ -212,10 +218,11 @@ namespace StoreManage.Services.Test.Unit.SellFactors
             var commodity = CommodityFactory.CreateCommodity(category.Id);
             _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
 
-            var sellfactor = SellFactorFactory.GenerateSellFactor(commodity.Code);
+            var sellfactor=SellFactorFactory.GenerateSellFactor(commodity.Code);
             _dataContext.Manipulate(_ => _.SellFactors.Add(sellfactor));
 
-            var secondsellFactor = SellFactorFactory.GenerateSellFactor(commodity.Code);
+            var secondsellFactor = SellFactorFactory
+                .GenerateSellFactor(commodity.Code);
             secondsellFactor.Count = 1;
             secondsellFactor.TotalPrice = "150000";
             _dataContext.Manipulate(_ => _.SellFactors.Add(secondsellFactor));
@@ -225,8 +232,18 @@ namespace StoreManage.Services.Test.Unit.SellFactors
             var expected = _sut.GetAll();
 
             expected.Should().HaveCount(2);
-            expected.Should().Contain(_ => _.CommodityCode == commodity.Code && _.Count == sellfactor.Count && _.Date == sellfactor.Date && _.BasePrice == sellfactor.BasePrice && _.TotalPrice == sellfactor.TotalPrice && _.BuyerName == sellfactor.BuyerName);
-            expected.Should().Contain(_ => _.CommodityCode == commodity.Code && _.Count == secondsellFactor.Count && _.Date == secondsellFactor.Date && _.BasePrice == secondsellFactor.BasePrice && _.TotalPrice == secondsellFactor.TotalPrice && _.BuyerName == secondsellFactor.BuyerName);
+
+            expected.Should().Contain(_ => _.CommodityCode == commodity.Code
+            && _.Count == sellfactor.Count && _.Date == sellfactor.Date
+            && _.BasePrice == sellfactor.BasePrice
+            && _.TotalPrice == sellfactor.TotalPrice 
+            && _.BuyerName == sellfactor.BuyerName);
+
+            expected.Should().Contain(_ => _.CommodityCode == commodity.Code
+            && _.Count==secondsellFactor.Count&& _.Date==secondsellFactor.Date
+            && _.BasePrice == secondsellFactor.BasePrice
+            && _.TotalPrice == secondsellFactor.TotalPrice 
+            && _.BuyerName == secondsellFactor.BuyerName);
         }
 
         [Fact]
@@ -238,7 +255,7 @@ namespace StoreManage.Services.Test.Unit.SellFactors
             var commodity = CommodityFactory.CreateCommodity(category.Id);
             _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
 
-            var sellfactor = SellFactorFactory.GenerateSellFactor(commodity.Code);
+            var sellfactor=SellFactorFactory.GenerateSellFactor(commodity.Code);
             _dataContext.Manipulate(_ => _.SellFactors.Add(sellfactor));
             commodity.Inventory += sellfactor.Count;
 

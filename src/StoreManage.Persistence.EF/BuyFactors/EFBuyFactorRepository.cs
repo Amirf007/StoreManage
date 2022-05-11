@@ -32,7 +32,6 @@ namespace StoreManage.Persistence.EF.BuyFactors
             return _dataContext.BuyFactors
                  .Select(_ => new GetBuyFactorDto
                  {
-
                      CommodityCode = _.CommodityCode,
                      Date = _.Date,
                      Count = _.Count,
@@ -44,7 +43,9 @@ namespace StoreManage.Persistence.EF.BuyFactors
 
         public GetBuyFactorDto GetBuyFactor(int buyFactorNumber)
         {
-            return _dataContext.BuyFactors.Where(_ => _.BuyFactorNumber == buyFactorNumber).Select(_ => new GetBuyFactorDto
+            return _dataContext.BuyFactors
+                .Where(_ => _.BuyFactorNumber == buyFactorNumber)
+            .Select(_ => new GetBuyFactorDto
             {
                 CommodityCode = _.CommodityCode,
                 Date = _.Date,

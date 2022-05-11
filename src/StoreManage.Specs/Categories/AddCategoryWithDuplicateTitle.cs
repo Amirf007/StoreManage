@@ -18,7 +18,7 @@ using static StoreManage.Specs.BDDHelper;
 
 namespace StoreManage.Specs.Categories
 {
-    [Scenario("تعریف دسته بندی ")]
+    [Scenario("تعریف دسته بندی با عنوان تکراری ")]
     [Feature("",
         AsA = "فروشنده ",
         IWantTo = " دسته بندی کالاها را مدیریت کنم  ",
@@ -34,7 +34,8 @@ namespace StoreManage.Specs.Categories
         private Category _category;
         Action expected;
 
-        public AddCategoryWithDuplicateTitle(ConfigurationFixture configuration) : base(configuration)
+        public AddCategoryWithDuplicateTitle(ConfigurationFixture configuration)
+            :base(configuration)
         {
             _dataContext = CreateDataContext();
             _unitOfWork = new EFUnitOfWork(_dataContext);
@@ -53,10 +54,7 @@ namespace StoreManage.Specs.Categories
         [When("دسته بندی با عنوان 'لبنیات' تعریف میکنم")]
         public void When()
         {
-            _dto = new AddCategoryDto
-            {
-                Title = _category.Title
-            };
+            _dto = AddCategoryDtoFactory.GenerateAddCategoryDto();
 
             expected = () => _sut.Add(_dto);
         }
@@ -71,7 +69,7 @@ namespace StoreManage.Specs.Categories
         [And("خطایی با عنوان’عنوان کتاب در یک دسته بندی تکراریست’ باید رخ دهد")]
         public void ThenAnd()       
         {
-            expected.Should().ThrowExactly<CategoryIsAlreadyExistException>();
+            expected.Should().ThrowExactly<DuplicateCategoryTitleException>();
         }
 
         [Fact]

@@ -16,7 +16,8 @@ namespace StoreManage.Services.SellFactors
         private UnitOfWork _unitOfWork;
         private CommodityRepository _commodityRepository;
 
-        public SellFactorAppService(SellFactorRepository sellfactorrepository, UnitOfWork unitOfWork, CommodityRepository commodityRepository)
+        public SellFactorAppService(SellFactorRepository sellfactorrepository
+            , UnitOfWork unitOfWork, CommodityRepository commodityRepository)
         {
             _repository = sellfactorrepository;
             _unitOfWork = unitOfWork;
@@ -37,7 +38,8 @@ namespace StoreManage.Services.SellFactors
 
             _repository.Add(sellfactor);
 
-            Commodity commodity = _commodityRepository.GetbyId(sellfactor.CommodityCode);
+            Commodity commodity = _commodityRepository
+                .GetbyCode(sellfactor.CommodityCode);
             commodity.Inventory -= sellfactor.Count;
 
             _unitOfWork.Commit();
@@ -45,7 +47,8 @@ namespace StoreManage.Services.SellFactors
 
         public void Delete(int sellFactorNumber)
         {
-            var sellfactor = _repository.GetBySellFactorNumber(sellFactorNumber);
+            var sellfactor=_repository.GetBySellFactorNumber(sellFactorNumber);
+
             if (sellfactor == null)
             {
                 throw new SellFactorNotFoundException();
@@ -53,7 +56,8 @@ namespace StoreManage.Services.SellFactors
 
             _repository.Remove(sellfactor);
 
-            var commodity = _commodityRepository.GetbyId(sellfactor.CommodityCode);
+            var commodity = _commodityRepository
+                .GetbyCode(sellfactor.CommodityCode);
             commodity.Inventory += sellfactor.Count;
 
             _unitOfWork.Commit();
@@ -67,6 +71,7 @@ namespace StoreManage.Services.SellFactors
         public GetSellFactorDto GetSellFactor(int sellFactorNumber)
         {
             var sellfactor = _repository.GetSellFactor(sellFactorNumber);
+
             if (sellfactor == null)
             {
                 throw new SellFactorNotFoundException();
@@ -77,13 +82,16 @@ namespace StoreManage.Services.SellFactors
 
         public void Update(int sellFactorNumber, UpdateSellFactorDto dto)
         {
-            SellFactor sellfactor = _repository.GetBySellFactorNumber(sellFactorNumber);
+            SellFactor sellfactor = _repository
+                .GetBySellFactorNumber(sellFactorNumber);
+
             if (sellfactor == null)
             {
                 throw new SellFactorNotFoundException();
             }
 
-            var commodity = _commodityRepository.GetbyId(sellfactor.CommodityCode);
+            var commodity = _commodityRepository
+                .GetbyCode(sellfactor.CommodityCode);
             commodity.Inventory -= (dto.Count - sellfactor.Count);
 
             sellfactor.CommodityCode = dto.CommodityCode;

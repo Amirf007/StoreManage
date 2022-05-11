@@ -35,15 +35,17 @@ namespace StoreManage.Specs.Commodities
         private readonly UnitOfWork _unitOfWork;
         private IList<GetCommodityDto> expected;
         private Category _category;
-        public GetAllCommodities(ConfigurationFixture configuration) : base(configuration)
+        public GetAllCommodities(ConfigurationFixture configuration)
+            : base(configuration)
         {
             _dataContext = CreateDataContext();
             _unitOfWork = new EFUnitOfWork(_dataContext);
             _repository = new EFCommodityRepository(_dataContext);
-            _sut = new CommodityAppService(_repository, _unitOfWork ,_categoryRepository);
+            _sut = new CommodityAppService
+                (_repository, _unitOfWork ,_categoryRepository);
         }
 
-        [Given("دسته بندی با عنوان 'لبنیات'در فهرست دسته بندی کالاها وجود دارد")]
+        [Given("دسته بندی با عنوان 'لبنیات'در فهرست دسته بندی های کالا وجود دارد")]
         public void Given()
         {
             _category = CategoryFactory.CreateCategory();
@@ -51,10 +53,11 @@ namespace StoreManage.Specs.Commodities
             _dataContext.Manipulate(_ => _.Categories.Add(_category));
         }
 
-        [Given("کالاهایی با نام های 'شیر رامک' و 'دوغ رامک' با قیمت های '150000' و '120000' و موجودی های '10' عدد و '15' عدد و بیشترین موجودی های '15' عدد و '20' عدد و کمترین موجودی های '5' عدد و '7' عدد در فهرست کالاها در دسته بندی با عنوان 'لبنیات' وجود دارد")]
+        [Given("کالاهایی با کد های '1' و '2' و نام های 'شیر رامک' و 'دوغ رامک' با قیمت های '150000' و '120000' و موجودی های '10' عدد و '15' عدد و بیشترین موجودی های '15' عدد و '20' عدد و کمترین موجودی های '5' عدد و '7' عدد در فهرست کالاها در دسته بندی با عنوان 'لبنیات' وجود دارد")]
         public void GivenAnd()
         {
-            var commodities = CommoditiesFactory.GenerateCommodities(_category.Id);
+            var commodities = CommoditiesFactory
+                .GenerateCommodities(_category.Id);
 
             _dataContext.Manipulate(_ => _.Commodities.AddRange(commodities));
         }
@@ -71,11 +74,16 @@ namespace StoreManage.Specs.Commodities
             expected.Should().HaveCount(2);
         }
 
-        [Then("در فهرست کالاها  کالاهایی با نام های 'شیر رامک' و 'دوغ رامک' با قیمت های '150000' و '120000' و موجودی های '10' و '15' و بیشترین موجودی های '15' و '20' و کمترین موجودی های '5' و '7'  در دسته بندی با عنوان 'لبنیات' باید وجود داشته باشد")]
+        [Then("در فهرست کالاها  کالاهایی با کد های '1' و '2' و نام های 'شیر رامک' و 'دوغ رامک' با قیمت های '150000' و '120000' و موجودی های '10' و '15' و بیشترین موجودی های '15' و '20' و کمترین موجودی های '5' و '7'  در دسته بندی با عنوان 'لبنیات' باید وجود داشته باشد")]
         public void ThenAnd()
         {
-            expected.Should().Contain(_ => _.Name == "شیر رامک" && _.Price == "150000" && _.Inventory == 10 && _.MaxInventory == "15" && _.MinInventory == "5" && _.CategoryId == _category.Id);
-            expected.Should().Contain(_ => _.Name == "دوغ رامک" && _.Price == "120000" && _.Inventory == 15 && _.MaxInventory == "20" && _.MinInventory == "7" && _.CategoryId == _category.Id);
+            expected.Should().Contain(_ => _.Name == "شیر رامک"
+            && _.Price == "150000" && _.Inventory == 10 && _.MaxInventory=="15"
+            && _.MinInventory == "5" && _.CategoryId == _category.Id);
+
+            expected.Should().Contain(_ => _.Name == "دوغ رامک" 
+            && _.Price == "120000" && _.Inventory == 15 && _.MaxInventory=="20"
+            && _.MinInventory == "7" && _.CategoryId == _category.Id);
         }
 
         [Fact]

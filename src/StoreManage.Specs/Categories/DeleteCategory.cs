@@ -31,7 +31,8 @@ namespace StoreManage.Specs.Categories
         private readonly CategoryRepository _repository;
         private readonly UnitOfWork _unitOfWork;
         private Category _category;
-        public DeleteCategory(ConfigurationFixture configuration) : base(configuration)
+        public DeleteCategory(ConfigurationFixture configuration) 
+            : base(configuration)
         {
             _dataContext = CreateDataContext();
             _unitOfWork = new EFUnitOfWork(_dataContext);
@@ -53,7 +54,7 @@ namespace StoreManage.Specs.Categories
             _sut.Delete(_category.Id);
         }
 
-        [Then("هیچ دسته بندی ای در فهرست دسته بندی های کالا ها نباید وجود داشته باشد")]
+        [Then("هیچ دسته بندی ای در فهرست دسته بندی های کالا نباید وجود داشته باشد")]
         public void Then()
         {
             _dataContext.Categories.Should().HaveCount(0);

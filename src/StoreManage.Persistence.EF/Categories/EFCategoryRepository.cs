@@ -27,7 +27,6 @@ namespace StoreManage.Persistence.EF.Categories
             return _dataContext.Categories
                   .Select(_ => new GetCategoryDto
                   {
-
                      Title = _.Title,
 
                   }).ToList();
