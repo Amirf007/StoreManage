@@ -100,6 +100,21 @@ namespace StoreManage.Services.Test.Unit.Commodities
         }
 
         [Fact]
+        public void Add_throws_EqualOrLessInventoryThanMinimumCommodityInventoryException_when_inventory_of_commodity_that_added_is_equalorless_than_its_minimuminventoy()
+        {
+            var category = CategoryFactory.CreateCategory();
+            _dataContext.Manipulate(_ => _.Categories.Add(category));
+
+            AddCommodityDto dto = AddCommodityDtoFactory
+                .GenerateAddCommodityDto(category.Id);
+            dto.Inventory = 4;
+
+            Action expected = () => _sut.Add(dto);
+            expected.Should().ThrowExactly
+               <EqualOrLessInventoryThanMinimumCommodityInventoryException>();
+        }
+
+        [Fact]
         public void Update_update_commodity_properly()
         {
             var category = CategoryFactory.CreateCategory();
@@ -161,6 +176,25 @@ namespace StoreManage.Services.Test.Unit.Commodities
 
             Action Expected = () => _sut.Update(fakecommodityCode, dto);
             Expected.Should().ThrowExactly<CommodityNotFoundException>();
+        }
+
+        [Fact]
+        public void Update_throws_EqualOrLessInventoryThanMinimumCommodityInventoryException_when_inventory_of_commodity_that_want_to_be_updated_is_equalorless_than_its_minimuminventoy()
+        {
+            var category = CategoryFactory.CreateCategory();
+            _dataContext.Manipulate(_ => _.Categories.Add(category));
+
+            var commodity = CommodityFactory.CreateCommodity(category.Id);
+            _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
+
+            UpdateCommodityDto dto = UpdateCommodityDtoFactory
+                .GenerateUpdateCommodityDto(category.Id);
+            dto.Inventory = 4;
+
+            Action Expected = () => _sut.Update(commodity.Code, dto);
+            Expected.Should()
+                .ThrowExactly
+                <EqualOrLessInventoryThanMinimumCommodityInventoryException>();
         }
 
         [Fact]

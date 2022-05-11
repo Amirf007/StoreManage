@@ -30,6 +30,7 @@ namespace StoreManage.Services.Commodities
         public void Add(AddCommodityDto dto)        
         {
             var isCodeDuplicate = _repository.IsExistCodeCommodity(dto.Code);
+
             if (isCodeDuplicate)
             {
                 throw new DuplicateCommodityCodeException();
@@ -56,6 +57,12 @@ namespace StoreManage.Services.Commodities
             _repository.Add(commodity);
 
             _unitOfWork.Commit();
+
+            if (commodity.Inventory <= int.Parse(commodity.MinInventory))
+            {
+                throw new EqualOrLessInventoryThanMinimumCommodityInventoryException();
+            }
+
         }
 
         public void Delete(int code)
@@ -112,6 +119,11 @@ namespace StoreManage.Services.Commodities
             commodity.CategoryId = dto.CategoryId;
 
             _unitOfWork.Commit();
+
+            if (commodity.Inventory <= int.Parse(commodity.MinInventory))
+            {
+                throw new EqualOrLessInventoryThanMinimumCommodityInventoryException();
+            }
         }
     }
 }

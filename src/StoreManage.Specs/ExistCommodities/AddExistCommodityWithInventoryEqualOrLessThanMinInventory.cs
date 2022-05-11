@@ -22,25 +22,25 @@ using static StoreManage.Specs.BDDHelper;
 
 namespace StoreManage.Specs.ExistCommodities
 {
-    [Scenario("ویرایش خروج کالا ")]
+    [Scenario(" تعریف خروج کالا با موجودی برابر یا کمتر از حداقل موجودی ")]
     [Feature("",
-      AsA = "فروشنده ",
-      IWantTo = " خروج کالاها را مدیریت کنم ",
-      InOrderTo = "برای هر فروش کالا یک فاکتور فروش داشته باشم و کالا های خود را بفروشم"
-  )]
-    public class UpdateExistCommodity : EFDataContextDatabaseFixture
+       AsA = "فروشنده ",
+       IWantTo = " خروج کالاها را مدیریت کنم ",
+       InOrderTo = "برای هر فروش کالا یک فاکتور فروش داشته باشم و کالا های خود را بفروشم"
+   )]
+    public class AddExistCommodityWithInventoryEqualOrLessThanMinInventory : EFDataContextDatabaseFixture
     {
         private readonly EFDataContext _dataContext;
         private readonly SellFactorService _sut;
         private readonly SellFactorRepository _sellfactorrepository;
         private readonly CommodityRepository _commodityRepository;
         private readonly UnitOfWork _unitOfWork;
-        private UpdateSellFactorDto _dto;
-        private SellFactor _sellFactor;
+        private AddSellFactorDto _dto;
         private Category _category;
         private Commodity _commodity;
         private int _initialbalance;
-        public UpdateExistCommodity(ConfigurationFixture configuration)
+        Action expected;
+        public AddExistCommodityWithInventoryEqualOrLessThanMinInventory(ConfigurationFixture configuration)
             : base(configuration)
         {
             _dataContext = CreateDataContext();
@@ -68,45 +68,36 @@ namespace StoreManage.Specs.ExistCommodities
             _initialbalance = _commodity.Inventory;
         }
 
-        [Given("سند خروج کالایی با کد '1' به تعداد '3' عدد در تاریخ '2022/05/08' با قیمت پایه '150000' و قیمت کل 450000 در فهرست سندهای خروجی کالا وجود دارد")]
+        [Given("هیچ سند خروج کالایی در فهرست سند های خروجی کالا وجود ندارد")]
         public void GivenSecondAnd()
         {
-            _sellFactor=SellFactorFactory.GenerateSellFactor(_commodity.Code);
-            _dataContext.Manipulate(_ => _.SellFactors.Add(_sellFactor));
 
-            _commodity.Inventory -= _sellFactor.Count;
         }
 
-        [When(" تعداد و قیمت کل در سند خروج کالایی با کد '1' به تعداد '3' عدد در تاریخ '2022/05/08' با قیمت پایه '150000' و قیمت کل '450000' را ب تعداد '2' عدد و قیمت کل '300000' تغییر میدهم ")]
+        [When("تعداد '5' عدد از کالایی با کد '1'  قیمت پایه '150000' و قیمت کل '450000' در تاریخ '2022/05/08'  خارج میکنم و میفروشم  ")]
         public void When()
         {
-            _dto = UpdateSellFactorDtoFactory
-                .GenerateUpdateSellFactorDto(_commodity.Code);
+            _dto = AddSellFactorDtoFactory
+                .GenerateAddSellFactorDto(_commodity.Code);
+            _dto.Count = 6;
 
-            _sut.Update(_sellFactor.SellFactorNumber, _dto);
+            expected =()=> _sut.Add(_dto);
         }
 
-        [Then("سند خروج کالایی با کد '1' به تعداد '2' عدد در تاریخ '2022/05/08' با قیمت پایه '150000' و قیمت کل '300000' در فهرست سند های خروجی کالا باید وجود داشته باشد")]
+        [Then("موجودی کالایی با کد '1' باید بزرگتر از حداقل موجودی کالا با کد '1' باشد ")]
         public void Then()
-        {
-            var expected = _dataContext.SellFactors.FirstOrDefault();
-
-            expected.CommodityCode.Should().Be(_commodity.Code);
-            expected.Date.Should().Be(_dto.Date);
-            expected.BasePrice.Should().Be(_dto.BasePrice);
-            expected.TotalPrice.Should().Be(_dto.TotalPrice);
-            expected.Count.Should().Be(_dto.Count);
-            expected.BuyerName.Should().Be(_dto.BuyerName);
-        }
-
-        [Then("کالایی با نام 'شیر رامک' و کد '1' و موجودی '8' عدد در  دسته بندی کالا با عنوان 'لبنیات' باید وجود داشته باشد")]
-        public void ThenAnd()
         {
             var expected = _dataContext.Commodities.FirstOrDefault();
 
-            expected.Name.Should().Be(_commodity.Name);
-            expected.Code.Should().Be(_commodity.Code);
-            expected.Inventory.Should().Be(_initialbalance - _dto.Count);
+            expected.Inventory.Should()
+                .BeGreaterThan(int.Parse(expected.MinInventory));
+        }
+
+        [And("خطایی با عنوان 'موجودی کالایی با کد '1' برابر یا کمتر از حداقل موجودی ان است' باید رخ دهد")]
+        public void ThenAnd()
+        {
+            expected.Should().ThrowExactly
+               <EqualOrLessInventoryThanMinimumCommodityInventoryException>();
         }
 
         [Fact]

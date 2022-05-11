@@ -43,6 +43,11 @@ namespace StoreManage.Services.SellFactors
             commodity.Inventory -= sellfactor.Count;
 
             _unitOfWork.Commit();
+
+            if (commodity.Inventory <= int.Parse(commodity.MinInventory))
+            {
+                throw new EqualOrLessInventoryThanMinimumCommodityInventoryException();
+            }
         }
 
         public void Delete(int sellFactorNumber)
@@ -102,6 +107,11 @@ namespace StoreManage.Services.SellFactors
             sellfactor.BuyerName = dto.BuyerName;
 
             _unitOfWork.Commit();
+
+            if (commodity.Inventory <= int.Parse(commodity.MinInventory))
+            {
+                throw new EqualOrLessInventoryThanMinimumCommodityInventoryException();
+            }
         }
     }
 }

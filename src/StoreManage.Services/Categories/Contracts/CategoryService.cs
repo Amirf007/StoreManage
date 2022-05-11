@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace StoreManage.Services.Categories.Contracts
 {
-    public interface CategoryService : Repository
+    public interface CategoryService : Service
     {
         void Add(AddCategoryDto dto);
         void Update(int id, UpdateCategoryDto dto);

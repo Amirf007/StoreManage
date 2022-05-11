@@ -84,6 +84,25 @@ namespace StoreManage.Services.Test.Unit.SellFactors
         }
 
         [Fact]
+        public void Add_throws_EqualOrLessInventoryThanMinimumCommodityInventoryException_when_commodityinventory_that_exist_is_equalorless_than_its_minimuminventoy()
+        {
+            var category = CategoryFactory.CreateCategory();
+            _dataContext.Manipulate(_ => _.Categories.Add(category));
+
+            var commodity = CommodityFactory.CreateCommodity(category.Id);
+            _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
+            var initialbalance = commodity.Inventory;
+
+            var dto = AddSellFactorDtoFactory
+                .GenerateAddSellFactorDto(commodity.Code);
+            dto.Count = 6;
+
+            Action expected =()=> _sut.Add(dto);
+            expected.Should().ThrowExactly
+               <EqualOrLessInventoryThanMinimumCommodityInventoryException>();
+        }
+
+        [Fact]
         public void Update_update_inventory_of_existcommodity_properly()
         {
             var category = CategoryFactory.CreateCategory();
@@ -151,6 +170,29 @@ namespace StoreManage.Services.Test.Unit.SellFactors
 
             Action Expected = () => _sut.Update(fakesellfactornumber, dto);
             Expected.Should().ThrowExactly<SellFactorNotFoundException>();
+        }
+
+        [Fact]
+        public void Update_throws_EqualOrLessInventoryThanMinimumCommodityInventoryException_when_inventory_of_commodity_that_updateexisting_is_equalorless_than_its_minimuminventoy()
+        {
+            var category = CategoryFactory.CreateCategory();
+            _dataContext.Manipulate(_ => _.Categories.Add(category));
+
+            var commodity = CommodityFactory.CreateCommodity(category.Id);
+            _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
+
+            var sellFactor=SellFactorFactory.GenerateSellFactor(commodity.Code);
+            _dataContext.Manipulate(_ => _.SellFactors.Add(sellFactor));
+            commodity.Inventory -= sellFactor.Count;
+
+            var dto = UpdateSellFactorDtoFactory
+                .GenerateUpdateSellFactorDto(commodity.Code);
+            dto.Count = 5;
+            dto.TotalPrice = "750000";
+
+            Action expected =()=> _sut.Update(sellFactor.SellFactorNumber, dto);
+            expected.Should().ThrowExactly
+                <EqualOrLessInventoryThanMinimumCommodityInventoryException>();
         }
 
         [Fact]

@@ -1,4 +1,5 @@
-﻿using StoreManage.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using StoreManage.Entities;
 using StoreManage.Services.Commodities.Contracts;
 using System;
 using System.Collections.Generic;
