@@ -13,6 +13,7 @@ namespace StoreManage.Test.Tools.Commodities
         {
             return new UpdateCommodityDto
             {
+                Code = 3,
                 Name = "شیر رامک",
                 Price = "170000",
                 Inventory = 10,

@@ -45,7 +45,8 @@ namespace StoreManage.Specs.Commodities
             _unitOfWork = new EFUnitOfWork(_dataContext);
             _commodityrepository = new EFCommodityRepository(_dataContext);
             _categoryRepository = new EFCategoryRepository(_dataContext);
-            _sut = new CommodityAppService(_commodityrepository, _unitOfWork, _categoryRepository);
+            _sut = new CommodityAppService
+                (_commodityrepository, _unitOfWork, _categoryRepository);
         }
 
         [Given("دسته بندی با عنوان 'لبنیات' در فهرست دسته بندی کالا وجود دارد")]

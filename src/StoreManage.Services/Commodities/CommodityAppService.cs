@@ -111,6 +111,12 @@ namespace StoreManage.Services.Commodities
                 throw new DuplicateCommodityNameInCategoryException();
             }
 
+            var isCodeDuplicate = _repository.IsExistCodeCommodity(dto.Code);
+            if (isCodeDuplicate)
+            {
+                throw new DuplicateCommodityCodeException();
+            }
+
             commodity.Name = dto.Name;
             commodity.Price = dto.Price;
             commodity.Inventory = dto.Inventory;

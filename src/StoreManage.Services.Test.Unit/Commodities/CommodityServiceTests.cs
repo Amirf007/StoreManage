@@ -198,6 +198,29 @@ namespace StoreManage.Services.Test.Unit.Commodities
         }
 
         [Fact]
+        public void Update_throw_DuplicateCommodityCodeException_When_commodity_update_with_duplicate_Code()
+        {
+            var category = CategoryFactory.CreateCategory();
+            _dataContext.Manipulate(_ => _.Categories.Add(category));
+
+            var commodity = CommodityFactory.CreateCommodity(category.Id);
+            _dataContext.Manipulate(_ => _.Commodities.Add(commodity));
+
+            var existcommodity = CommodityFactory.CreateCommodity(category.Id);
+            existcommodity.Code = 2;
+            _dataContext.Manipulate(_ => _.Commodities.Add(existcommodity));
+
+            var dto = UpdateCommodityDtoFactory
+               .GenerateUpdateCommodityDto(category.Id);
+            dto.Name = "شیر پر چرب رامک";
+            dto.Code = existcommodity.Code;
+
+            Action Expected = () => _sut.Update(commodity.Code, dto);
+            Expected.Should()
+                .ThrowExactly<DuplicateCommodityCodeException>();
+        }
+
+        [Fact]
         public void Delete_delete_commodity_properly()
         {
             var category = CategoryFactory.CreateCategory();

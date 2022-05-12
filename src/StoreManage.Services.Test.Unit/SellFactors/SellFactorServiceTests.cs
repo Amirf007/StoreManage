@@ -84,7 +84,7 @@ namespace StoreManage.Services.Test.Unit.SellFactors
         }
 
         [Fact]
-        public void Add_throws_EqualOrLessInventoryThanMinimumCommodityInventoryException_when_commodityinventory_that_exist_is_equalorless_than_its_minimuminventoy()
+        public void Add_throws_EqualOrLessInventoryThanMinimumCommodityInventoryException_when_commodityinventory_that_exist_is_equal_or_less_than_its_minimuminventoy()
         {
             var category = CategoryFactory.CreateCategory();
             _dataContext.Manipulate(_ => _.Categories.Add(category));
@@ -173,7 +173,7 @@ namespace StoreManage.Services.Test.Unit.SellFactors
         }
 
         [Fact]
-        public void Update_throws_EqualOrLessInventoryThanMinimumCommodityInventoryException_when_inventory_of_commodity_that_updateexisting_is_equalorless_than_its_minimuminventoy()
+        public void Update_throws_EqualOrLessInventoryThanMinimumCommodityInventoryException_when_inventory_of_commodity_that_updateexisting_is_equal_or_less_than_its_minimuminventoy()
         {
             var category = CategoryFactory.CreateCategory();
             _dataContext.Manipulate(_ => _.Categories.Add(category));

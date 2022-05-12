@@ -21,13 +21,13 @@ using static StoreManage.Specs.BDDHelper;
 
 namespace StoreManage.Specs.Commodities
 {
-    [Scenario("ویرایش کالا با موجودی برابر یا کمتر از حداقل موجودی")]
+    [Scenario("ویرایش کالا با کد تکرای در یک دسته بندی")]
     [Feature("",
         AsA = "فروشنده ",
         IWantTo = " کالاها را مدیریت کنم ",
         InOrderTo = "کالا ها را دسته بندی و خرید و فروش کنم"
     )]
-    public class UpdateCommodityWithInventoryEqualOrLessThanMinInventory : EFDataContextDatabaseFixture
+    public class UpdateCommodityWithDuplicateCode : EFDataContextDatabaseFixture
     {
         private readonly EFDataContext _dataContext;
         private readonly CommodityService _sut;
@@ -37,9 +37,9 @@ namespace StoreManage.Specs.Commodities
         private UpdateCommodityDto _dto;
         private Category _category;
         private Commodity _commodity;
+        private Commodity _existcommodity;
         Action expected;
-        public UpdateCommodityWithInventoryEqualOrLessThanMinInventory
-            (ConfigurationFixture configuration)
+        public UpdateCommodityWithDuplicateCode(ConfigurationFixture configuration)
             : base(configuration)
         {
             _dataContext = CreateDataContext();
@@ -66,30 +66,38 @@ namespace StoreManage.Specs.Commodities
             _dataContext.Manipulate(_ => _.Commodities.Add(_commodity));
         }
 
-        [When("موجودی کالایی با کد '1' و نام 'شیر رامک' و قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' و کمترین موجودی '5' را ب '4' عدد تغییر میدهم")]
+        [Given(" کالایی با کد '2' در دسته بندی با عنوان 'لبنیات' وجود دارد")]
+        public void GivenSecondAnd()
+        {
+            _existcommodity = CommodityFactory.CreateCommodity(_category.Id);
+            _existcommodity.Code = 2;
+
+            _dataContext.Manipulate(_ => _.Commodities.Add(_existcommodity));
+        }
+
+        [When("نام و کد کالایی با کد '1' و نام 'شیر رامک' و قیمت '150000' ریال و موجودی '10' عدد و بیشترین موجودی '15' و کمترین موجودی '5' را ب  'شیر پر چرب رامک' با کد '2' تغییر میدهم")]
         public void When()
         {
             _dto = UpdateCommodityDtoFactory
                 .GenerateUpdateCommodityDto(_category.Id);
-            _dto.Inventory = 4;
+            _dto.Name = "شیر پر چرب رامک";
+            _dto.Code = _existcommodity.Code;
 
             expected = () => _sut.Update(_commodity.Code, _dto);
         }
 
-        [Then("موجودی کالایی با کد '1' باید بزرگتر از حداقل موجودی کالا با کد '1' باشد ")]
+        [Then("در فهرست کالاها تنها یک کالا با کد '1' باید وجود داشته باشد")]
         public void Then()
         {
-            var expected = _dataContext.Commodities.FirstOrDefault();
-
-            expected.Inventory.Should()
-                .BeGreaterThan(int.Parse(expected.MinInventory));
+            _dataContext.Commodities.Where(_ => _.Code == _commodity.Code)
+                .Should().HaveCount(1);
         }
 
-        [And("خطایی با عنوان 'موجودی کالایی با کد '1' برابر یا کمتر از حداقل موجودی ان است' باید رخ دهد")]
+        [And("خطایی با عنوان 'کد کالا تکراریست ' باید رخ دهد")]
         public void ThenAnd()
         {
-            expected.Should().ThrowExactly
-                <EqualOrLessInventoryThanMinimumCommodityInventoryException>();
+            expected.Should()
+                .ThrowExactly<DuplicateCommodityCodeException>();
         }
 
         [Fact]
@@ -97,10 +105,10 @@ namespace StoreManage.Specs.Commodities
         {
             Given();
             GivenAnd();
+            GivenSecondAnd();
             When();
             Then();
             ThenAnd();
         }
-
     }
 }
